@@ -42,8 +42,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             }
             const { data } = await api.get("/auth/profile");
             setUser(data);
-        } catch (error) {
-            console.error("Auth check failed", error);
+        } catch (error: any) {
+            if (error.response?.status !== 401) {
+                console.error("Auth check failed", error);
+            }
             setUser(null);
             // Optional: clear tokens if invalid
             // localStorage.removeItem("accessToken");

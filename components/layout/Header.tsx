@@ -1,18 +1,33 @@
 "use client";
 
+import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Search, ShoppingBag, Heart, User, Menu } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { useAuth } from '../providers/AuthProvider';
+import { useCart } from '@/lib/contexts/CartContext';
+import { useWishlist } from '@/lib/contexts/WishlistContext';
 
 export function Header() {
     const { user } = useAuth();
+    const router = useRouter();
+    const { itemCount: cartCount } = useCart();
+    const { itemCount: wishlistCount } = useWishlist();
+    const [searchQuery, setSearchQuery] = useState('');
+
+    const handleSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (searchQuery.trim()) {
+            router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+        }
+    };
 
     return (
         <header className="sticky top-0 z-50 w-full bg-white flex flex-col">
             {/* Top Bar for Language & Location (Optional - for future) */}
             <div className="bg-[#f0f2f5] py-1 text-xs text-slate-600 hidden md:block">
-                <div className="container mx-auto px-4 flex justify-between">
+                <div className="max-w-7xl mx-auto px-6 flex justify-between">
                     <span>Shahar: Toshkent</span>
                     <div className="flex gap-4">
                         <span>Buyurtmalarim</span>
@@ -22,7 +37,7 @@ export function Header() {
             </div>
 
             <div className="border-b">
-                <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-6">
+                <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-6">
                     {/* Logo & Catalog */}
                     <div className="flex items-center gap-4 shrink-0">
                         <Link href="/" className="text-3xl font-bold text-[#7000ff] tracking-tight">
@@ -31,23 +46,27 @@ export function Header() {
                     </div>
 
                     {/* Catalog Button */}
-                    <Button className="hidden md:flex gap-2 bg-[#f0f2f5] text-[#7000ff] hover:bg-[#e6e8eb] border-none font-medium px-4">
-                        <Menu className="h-5 w-5" />
-                        Katalog
-                    </Button>
+                    <Link href="/catalog">
+                        <Button className="hidden md:flex gap-2 bg-[#f0f2f5] text-[#7000ff] hover:bg-[#e6e8eb] border-none font-medium px-4">
+                            <Menu className="h-5 w-5" />
+                            Katalog
+                        </Button>
+                    </Link>
 
                     {/* Search Bar */}
                     <div className="flex-1 max-w-3xl hidden md:block">
-                        <div className="relative flex h-10 border border-slate-300 rounded-md overflow-hidden hover:border-slate-400 focus-within:border-[#7000ff]">
+                        <form onSubmit={handleSearch} className="relative flex h-10 border border-slate-300 rounded-md overflow-hidden hover:border-slate-400 focus-within:border-[#7000ff]">
                             <input
                                 type="text"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder="Mahsulot va toifalarni qidirish"
                                 className="w-full h-full pl-4 pr-12 focus:outline-none text-sm placeholder:text-slate-400"
                             />
-                            <button className="absolute right-0 top-0 h-full px-6 bg-[#f0f2f5] hover:bg-[#e6e8eb] text-slate-500 border-l border-slate-200">
+                            <button type="submit" className="absolute right-0 top-0 h-full px-6 bg-[#f0f2f5] hover:bg-[#e6e8eb] text-slate-500 border-l border-slate-200">
                                 <Search className="h-5 w-5" />
                             </button>
-                        </div>
+                        </form>
                     </div>
 
                     {/* User Actions */}
@@ -67,14 +86,25 @@ export function Header() {
                         )}
 
                         <Link href="/wishlist" className="flex items-center gap-2 text-slate-700 hover:text-slate-900">
-                            <Heart className="h-6 w-6" />
+                            <div className="relative">
+                                <Heart className="h-6 w-6" />
+                                {wishlistCount > 0 && (
+                                    <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                                        {wishlistCount}
+                                    </span>
+                                )}
+                            </div>
                             <span className="text-sm font-medium hidden lg:inline">Sevimlilar</span>
                         </Link>
 
                         <Link href="/cart" className="flex items-center gap-2 text-slate-700 hover:text-slate-900">
                             <div className="relative">
                                 <ShoppingBag className="h-6 w-6" />
-                                <span className="absolute -top-1 -right-1 h-4 w-4 bg-[#7000ff] text-white text-[10px] font-bold rounded-full flex items-center justify-center">0</span>
+                                {cartCount > 0 && (
+                                    <span className="absolute -top-1 -right-1 h-4 w-4 bg-[#7000ff] text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                                        {cartCount}
+                                    </span>
+                                )}
                             </div>
                             <span className="text-sm font-medium hidden lg:inline">Savat</span>
                         </Link>
@@ -84,14 +114,18 @@ export function Header() {
 
             {/* Mobile Search (Visible only on small screens) */}
             <div className="md:hidden px-4 py-3 bg-white border-b">
-                <div className="relative">
+                <form onSubmit={handleSearch} className="relative">
                     <input
                         type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
                         placeholder="Qidirish..."
                         className="w-full h-10 pl-4 pr-10 rounded-md bg-[#f0f2f5] border-none focus:ring-1 focus:ring-[#7000ff]"
                     />
-                    <Search className="absolute right-3 top-2.5 h-5 w-5 text-slate-400" />
-                </div>
+                    <button type="submit" className="absolute right-3 top-2.5">
+                        <Search className="h-5 w-5 text-slate-400" />
+                    </button>
+                </form>
             </div>
         </header>
     );

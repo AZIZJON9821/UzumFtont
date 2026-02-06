@@ -1,7 +1,7 @@
 export function Footer() {
     return (
         <footer className="bg-slate-100 py-8 mt-auto border-t">
-            <div className="container mx-auto px-4">
+            <div className="max-w-7xl mx-auto px-6">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                     <div>
                         <h3 className="font-bold mb-4">Biz haqimizda</h3>
