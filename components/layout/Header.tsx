@@ -1,0 +1,98 @@
+"use client";
+
+import Link from 'next/link';
+import { Search, ShoppingBag, Heart, User, Menu } from 'lucide-react';
+import { Button } from '../ui/Button';
+import { useAuth } from '../providers/AuthProvider';
+
+export function Header() {
+    const { user } = useAuth();
+
+    return (
+        <header className="sticky top-0 z-50 w-full bg-white flex flex-col">
+            {/* Top Bar for Language & Location (Optional - for future) */}
+            <div className="bg-[#f0f2f5] py-1 text-xs text-slate-600 hidden md:block">
+                <div className="container mx-auto px-4 flex justify-between">
+                    <span>Shahar: Toshkent</span>
+                    <div className="flex gap-4">
+                        <span>Buyurtmalarim</span>
+                        <span className="font-bold">O'zbekcha</span>
+                    </div>
+                </div>
+            </div>
+
+            <div className="border-b">
+                <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-6">
+                    {/* Logo & Catalog */}
+                    <div className="flex items-center gap-4 shrink-0">
+                        <Link href="/" className="text-3xl font-bold text-[#7000ff] tracking-tight">
+                            uzum market
+                        </Link>
+                    </div>
+
+                    {/* Catalog Button */}
+                    <Button className="hidden md:flex gap-2 bg-[#f0f2f5] text-[#7000ff] hover:bg-[#e6e8eb] border-none font-medium px-4">
+                        <Menu className="h-5 w-5" />
+                        Katalog
+                    </Button>
+
+                    {/* Search Bar */}
+                    <div className="flex-1 max-w-3xl hidden md:block">
+                        <div className="relative flex h-10 border border-slate-300 rounded-md overflow-hidden hover:border-slate-400 focus-within:border-[#7000ff]">
+                            <input
+                                type="text"
+                                placeholder="Mahsulot va toifalarni qidirish"
+                                className="w-full h-full pl-4 pr-12 focus:outline-none text-sm placeholder:text-slate-400"
+                            />
+                            <button className="absolute right-0 top-0 h-full px-6 bg-[#f0f2f5] hover:bg-[#e6e8eb] text-slate-500 border-l border-slate-200">
+                                <Search className="h-5 w-5" />
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* User Actions */}
+                    <div className="flex items-center gap-6 shrink-0">
+                        {user ? (
+                            <Link href="/profile" className="flex items-center gap-2 text-slate-700 hover:text-slate-900">
+                                <div className="h-8 w-8 bg-slate-100 rounded-full flex items-center justify-center text-[#7000ff] font-bold">
+                                    {user.fullName?.[0] || <User className="h-5 w-5" />}
+                                </div>
+                                <span className="text-sm font-medium hidden lg:inline truncate max-w-[100px]">{user.fullName || "Kabinet"}</span>
+                            </Link>
+                        ) : (
+                            <Link href="/auth/login" className="flex items-center gap-2 text-slate-700 hover:text-slate-900">
+                                <User className="h-6 w-6" />
+                                <span className="text-sm font-medium hidden lg:inline">Kirish</span>
+                            </Link>
+                        )}
+
+                        <Link href="/wishlist" className="flex items-center gap-2 text-slate-700 hover:text-slate-900">
+                            <Heart className="h-6 w-6" />
+                            <span className="text-sm font-medium hidden lg:inline">Sevimlilar</span>
+                        </Link>
+
+                        <Link href="/cart" className="flex items-center gap-2 text-slate-700 hover:text-slate-900">
+                            <div className="relative">
+                                <ShoppingBag className="h-6 w-6" />
+                                <span className="absolute -top-1 -right-1 h-4 w-4 bg-[#7000ff] text-white text-[10px] font-bold rounded-full flex items-center justify-center">0</span>
+                            </div>
+                            <span className="text-sm font-medium hidden lg:inline">Savat</span>
+                        </Link>
+                    </div>
+                </div>
+            </div>
+
+            {/* Mobile Search (Visible only on small screens) */}
+            <div className="md:hidden px-4 py-3 bg-white border-b">
+                <div className="relative">
+                    <input
+                        type="text"
+                        placeholder="Qidirish..."
+                        className="w-full h-10 pl-4 pr-10 rounded-md bg-[#f0f2f5] border-none focus:ring-1 focus:ring-[#7000ff]"
+                    />
+                    <Search className="absolute right-3 top-2.5 h-5 w-5 text-slate-400" />
+                </div>
+            </div>
+        </header>
+    );
+}
