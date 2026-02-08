@@ -55,6 +55,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
     // Savatga qo'shish
     const addToCart = async (dto: AddToCartDto) => {
+        if (!user) {
+            setError('Iltimos, avval tizimga kiring');
+            throw new Error('Iltimos, avval tizimga kiring');
+        }
+
         try {
             setLoading(true);
             setError(null);

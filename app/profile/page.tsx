@@ -3,17 +3,23 @@
 import { useAuth } from "@/components/providers/AuthProvider";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { AddressModal } from "@/components/profile/AddressModal";
+import { addressesApi, Address } from "@/lib/api/addresses";
 import api from "@/lib/api";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Trash2, MapPin } from "lucide-react";
+import { showToast } from "@/components/ui/Toast";
 
 export default function ProfilePage() {
     const router = useRouter();
-    const { logout } = useAuth(); // Use logout from context
+    const { logout } = useAuth();
     const [user, setUser] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [editing, setEditing] = useState(false);
+    const [showAddressModal, setShowAddressModal] = useState(false);
+    const [addresses, setAddresses] = useState<Address[]>([]);
 
     // Edit form state
     const [formData, setFormData] = useState({
@@ -21,11 +27,17 @@ export default function ProfilePage() {
         email: "",
     });
 
-    const [activeTab, setActiveTab] = useState("info"); // info, orders, addresses
+    const [activeTab, setActiveTab] = useState("info");
 
     useEffect(() => {
         fetchProfile();
     }, []);
+
+    useEffect(() => {
+        if (activeTab === "addresses") {
+            fetchAddresses();
+        }
+    }, [activeTab]);
 
     const fetchProfile = async () => {
         try {
@@ -44,6 +56,37 @@ export default function ProfilePage() {
             }
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchAddresses = async () => {
+        try {
+            const data = await addressesApi.getAll();
+            setAddresses(data);
+        } catch (err: any) {
+            console.error('Error fetching addresses:', err);
+        }
+    };
+
+    const handleDeleteAddress = async (id: string) => {
+        if (!confirm('Manzilni o\'chirmoqchimisiz?')) return;
+
+        try {
+            await addressesApi.delete(id);
+            showToast('Manzil o\'chirildi', 'success');
+            fetchAddresses();
+        } catch (err: any) {
+            showToast('Xatolik yuz berdi', 'error');
+        }
+    };
+
+    const handleSetDefault = async (id: string) => {
+        try {
+            await addressesApi.setDefault(id);
+            showToast('Asosiy manzil o\'zgartirildi', 'success');
+            fetchAddresses();
+        } catch (err: any) {
+            showToast('Xatolik yuz berdi', 'error');
         }
     };
 
@@ -192,18 +235,75 @@ export default function ProfilePage() {
                             <div>
                                 <div className="flex justify-between items-center mb-6">
                                     <h3 className="text-xl font-bold text-slate-900">Manzillarim</h3>
-                                    <Button size="sm">Yangi manzil qo'shish</Button>
+                                    <Button size="sm" onClick={() => setShowAddressModal(true)}>
+                                        Yangi manzil qo'shish
+                                    </Button>
                                 </div>
-                                <div className="text-center py-12 bg-gray-50 rounded-lg">
-                                    <div className="text-4xl mb-4">📍</div>
-                                    <p className="text-slate-600 font-medium">Sizda saqlangan manzillar yo'q</p>
-                                </div>
+
+                                {addresses.length > 0 ? (
+                                    <div className="space-y-4">
+                                        {addresses.map((address) => (
+                                            <div
+                                                key={address.id}
+                                                className="p-4 border border-slate-200 rounded-lg hover:border-[#7000ff] transition-colors"
+                                            >
+                                                <div className="flex items-start justify-between">
+                                                    <div className="flex-1">
+                                                        <div className="flex items-center gap-2 mb-2">
+                                                            <MapPin className="h-4 w-4 text-[#7000ff]" />
+                                                            <h4 className="font-semibold text-slate-900">
+                                                                {address.city}, {address.district}
+                                                            </h4>
+                                                            {address.isDefault && (
+                                                                <span className="px-2 py-0.5 bg-[#7000ff] text-white text-xs rounded-full">
+                                                                    Asosiy
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                        <p className="text-slate-600 text-sm">
+                                                            {address.street}, {address.house}
+                                                        </p>
+                                                    </div>
+                                                    <div className="flex gap-2">
+                                                        {!address.isDefault && (
+                                                            <Button
+                                                                size="sm"
+                                                                variant="ghost"
+                                                                onClick={() => handleSetDefault(address.id)}
+                                                            >
+                                                                Asosiy qilish
+                                                            </Button>
+                                                        )}
+                                                        <button
+                                                            onClick={() => handleDeleteAddress(address.id)}
+                                                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                                        >
+                                                            <Trash2 className="h-4 w-4" />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="text-center py-12 bg-gray-50 rounded-lg">
+                                        <div className="text-4xl mb-4">📍</div>
+                                        <p className="text-slate-600 font-medium">Sizda saqlangan manzillar yo'q</p>
+                                    </div>
+                                )}
                             </div>
                         )}
 
                     </div>
                 </div>
             </div>
+
+            {/* Address Modal */}
+            <AddressModal
+                isOpen={showAddressModal}
+                onClose={() => setShowAddressModal(false)}
+                onSuccess={fetchAddresses}
+            />
         </div>
     );
 }

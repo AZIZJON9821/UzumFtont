@@ -3,10 +3,12 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import { Heart, ShoppingCart, Star } from 'lucide-react';
 import type { Product, ProductVariant } from '@/lib/types';
 import { useWishlist } from '@/lib/contexts/WishlistContext';
 import { useCart } from '@/lib/contexts/CartContext';
+import { useAuth } from '@/components/providers/AuthProvider';
 import { showToast } from '../ui/Toast';
 
 interface ProductCardProps {
@@ -14,6 +16,8 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product }: ProductCardProps) {
+    const router = useRouter();
+    const { user } = useAuth();
     const { isInWishlist, toggleWishlist } = useWishlist();
     const { addToCart } = useCart();
 
@@ -33,6 +37,13 @@ export function ProductCard({ product }: ProductCardProps) {
 
     const handleWishlistClick = async (e: React.MouseEvent) => {
         e.preventDefault();
+
+        if (!user) {
+            showToast('Iltimos, avval tizimga kiring', 'error');
+            router.push('/auth/login');
+            return;
+        }
+
         try {
             const isAdded = await toggleWishlist(product.id);
             showToast(
@@ -46,6 +57,13 @@ export function ProductCard({ product }: ProductCardProps) {
 
     const handleAddToCart = async (e: React.MouseEvent) => {
         e.preventDefault();
+
+        if (!user) {
+            showToast('Iltimos, avval tizimga kiring', 'error');
+            router.push('/auth/login');
+            return;
+        }
+
         if (!cheapestVariant) {
             showToast('Mahsulot mavjud emas', 'error');
             return;
