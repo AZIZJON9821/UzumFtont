@@ -121,26 +121,26 @@ export default function ProfilePage() {
                             <div className="h-20 w-20 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-3xl mb-3">
                                 {user?.fullName?.[0] || user?.phone?.[0] || "?"}
                             </div>
-                            <h2 className="text-xl font-bold text-slate-900 text-center">{user?.fullName || "Ism yo'q"}</h2>
-                            <p className="text-slate-500 text-sm">{user?.phone}</p>
+                            <h2 className="text-xl font-bold text-black text-center">{user?.fullName || "Ism yo'q"}</h2>
+                            <p className="text-slate-900 text-sm">{user?.phone}</p>
                         </div>
 
                         <nav className="flex flex-col gap-2">
                             <button
                                 onClick={() => setActiveTab("info")}
-                                className={`w-full text-left px-4 py-2 rounded-md font-medium transition-colors ${activeTab === "info" ? "bg-[#7000ff] text-white" : "hover:bg-gray-100 text-slate-700"}`}
+                                className={`w-full text-left px-4 py-2 rounded-md font-medium transition-colors ${activeTab === "info" ? "bg-[#7000ff] text-white" : "hover:bg-gray-100 text-black"}`}
                             >
                                 Ma'lumotlarim
                             </button>
                             <button
                                 onClick={() => setActiveTab("orders")}
-                                className={`w-full text-left px-4 py-2 rounded-md font-medium transition-colors ${activeTab === "orders" ? "bg-[#7000ff] text-white" : "hover:bg-gray-100 text-slate-700"}`}
+                                className={`w-full text-left px-4 py-2 rounded-md font-medium transition-colors ${activeTab === "orders" ? "bg-[#7000ff] text-white" : "hover:bg-gray-100 text-black"}`}
                             >
                                 Buyurtmalarim
                             </button>
                             <button
                                 onClick={() => setActiveTab("addresses")}
-                                className={`w-full text-left px-4 py-2 rounded-md font-medium transition-colors ${activeTab === "addresses" ? "bg-[#7000ff] text-white" : "hover:bg-gray-100 text-slate-700"}`}
+                                className={`w-full text-left px-4 py-2 rounded-md font-medium transition-colors ${activeTab === "addresses" ? "bg-[#7000ff] text-white" : "hover:bg-gray-100 text-black"}`}
                             >
                                 Manzillarim
                             </button>
@@ -163,7 +163,7 @@ export default function ProfilePage() {
                         {activeTab === "info" && (
                             <div>
                                 <div className="flex justify-between items-center mb-6">
-                                    <h3 className="text-xl font-bold text-slate-900">Shaxsiy ma'lumotlar</h3>
+                                    <h3 className="text-xl font-bold text-black">Shaxsiy ma'lumotlar</h3>
                                     {!editing && (
                                         <Button variant="ghost" size="sm" onClick={() => setEditing(true)}>
                                             Tahrirlash
@@ -174,14 +174,14 @@ export default function ProfilePage() {
                                 {editing ? (
                                     <form onSubmit={handleUpdate} className="space-y-4 max-w-md">
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Ism Familiya</label>
+                                            <label className="block text-sm font-medium text-black mb-1">Ism Familiya</label>
                                             <Input
                                                 value={formData.fullName}
                                                 onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                                             />
                                         </div>
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                            <label className="block text-sm font-medium text-black mb-1">Email</label>
                                             <Input
                                                 type="email"
                                                 value={formData.email}
@@ -196,16 +196,16 @@ export default function ProfilePage() {
                                 ) : (
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div className="p-4 bg-gray-50 rounded-lg">
-                                            <label className="block text-xs text-slate-500 uppercase font-semibold mb-1">Telefon</label>
-                                            <p className="font-bold text-slate-900 text-lg">{user?.phone}</p>
+                                            <label className="block text-xs text-slate-900 uppercase font-semibold mb-1">Telefon</label>
+                                            <p className="font-bold text-black text-lg">{user?.phone}</p>
                                         </div>
                                         <div className="p-4 bg-gray-50 rounded-lg">
-                                            <label className="block text-xs text-slate-500 uppercase font-semibold mb-1">Email</label>
-                                            <p className="font-bold text-slate-900 text-lg">{user?.email || "Kiritilmagan"}</p>
+                                            <label className="block text-xs text-slate-900 uppercase font-semibold mb-1">Email</label>
+                                            <p className="font-bold text-black text-lg">{user?.email || "Kiritilmagan"}</p>
                                         </div>
                                         <div className="p-4 bg-gray-50 rounded-lg">
-                                            <label className="block text-xs text-slate-500 uppercase font-semibold mb-1">Ism</label>
-                                            <p className="font-bold text-slate-900 text-lg">{user?.fullName || "Kiritilmagan"}</p>
+                                            <label className="block text-xs text-slate-900 uppercase font-semibold mb-1">Ism</label>
+                                            <p className="font-bold text-black text-lg">{user?.fullName || "Kiritilmagan"}</p>
                                         </div>
                                         <div className="p-4 bg-gray-50 rounded-lg">
                                             <label className="block text-xs text-slate-500 uppercase font-semibold mb-1">Holati</label>
@@ -221,10 +221,10 @@ export default function ProfilePage() {
                         {/* ORDERS TAB */}
                         {activeTab === "orders" && (
                             <div>
-                                <h3 className="text-xl font-bold text-slate-900 mb-6">Buyurtmalar tarixi</h3>
+                                <h3 className="text-xl font-bold text-black mb-6">Buyurtmalar tarixi</h3>
                                 <div className="text-center py-12 bg-gray-50 rounded-lg">
                                     <div className="text-4xl mb-4">📦</div>
-                                    <p className="text-slate-600 font-medium">Sizda hozircha buyurtmalar yo'q</p>
+                                    <p className="text-black font-medium">Sizda hozircha buyurtmalar yo'q</p>
                                     <Button className="mt-4" onClick={() => router.push("/")}>Xaridni boshlash</Button>
                                 </div>
                             </div>
@@ -234,7 +234,7 @@ export default function ProfilePage() {
                         {activeTab === "addresses" && (
                             <div>
                                 <div className="flex justify-between items-center mb-6">
-                                    <h3 className="text-xl font-bold text-slate-900">Manzillarim</h3>
+                                    <h3 className="text-xl font-bold text-black">Manzillarim</h3>
                                     <Button size="sm" onClick={() => setShowAddressModal(true)}>
                                         Yangi manzil qo'shish
                                     </Button>
@@ -251,7 +251,7 @@ export default function ProfilePage() {
                                                     <div className="flex-1">
                                                         <div className="flex items-center gap-2 mb-2">
                                                             <MapPin className="h-4 w-4 text-[#7000ff]" />
-                                                            <h4 className="font-semibold text-slate-900">
+                                                            <h4 className="font-semibold text-black">
                                                                 {address.city}, {address.district}
                                                             </h4>
                                                             {address.isDefault && (
@@ -260,7 +260,7 @@ export default function ProfilePage() {
                                                                 </span>
                                                             )}
                                                         </div>
-                                                        <p className="text-slate-600 text-sm">
+                                                        <p className="text-black text-sm">
                                                             {address.street}, {address.house}
                                                         </p>
                                                     </div>
@@ -288,7 +288,7 @@ export default function ProfilePage() {
                                 ) : (
                                     <div className="text-center py-12 bg-gray-50 rounded-lg">
                                         <div className="text-4xl mb-4">📍</div>
-                                        <p className="text-slate-600 font-medium">Sizda saqlangan manzillar yo'q</p>
+                                        <p className="text-black font-medium">Sizda saqlangan manzillar yo'q</p>
                                     </div>
                                 )}
                             </div>

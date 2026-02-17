@@ -108,7 +108,7 @@ export function ProductCard({ product }: ProductCardProps) {
                         className="absolute top-2 right-2 bg-white/90 hover:bg-white p-2 rounded-full shadow-md transition-all duration-200 hover:scale-110"
                     >
                         <Heart
-                            className={`h-5 w-5 ${isInWishlist(product.id) ? 'fill-red-500 text-red-500' : 'text-slate-600'
+                            className={`h-5 w-5 ${isInWishlist(product.id) ? 'fill-red-500 text-red-500' : 'text-black'
                                 }`}
                         />
                     </button>
@@ -117,21 +117,21 @@ export function ProductCard({ product }: ProductCardProps) {
                 {/* Ma'lumotlar */}
                 <div className="p-4 flex-1 flex flex-col">
                     {/* Nomi */}
-                    <h3 className="text-sm font-medium text-slate-800 line-clamp-2 mb-2 group-hover:text-[#7000ff] transition-colors">
+                    <h3 className="text-sm font-medium text-black line-clamp-2 mb-2 group-hover:text-[#7000ff] transition-colors">
                         {product.name}
                     </h3>
 
                     {/* Reyting */}
                     <div className="flex items-center gap-1 mb-3">
                         <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                        <span className="text-sm font-medium text-slate-700">{product.rating.toFixed(1)}</span>
+                        <span className="text-sm font-medium text-black">{product.rating.toFixed(1)}</span>
                         {/* <span className="text-xs text-slate-500">({product.reviewCount})</span> */}
                     </div>
 
                     {/* Narx */}
                     <div className="mt-auto">
                         <div className="flex items-baseline gap-2 mb-3">
-                            <span className="text-lg font-bold text-slate-900">
+                            <span className="text-lg font-bold text-black">
                                 {price.toLocaleString('uz-UZ')} so'm
                             </span>
                             {originalPrice && (

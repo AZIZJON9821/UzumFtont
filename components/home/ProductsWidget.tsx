@@ -36,7 +36,7 @@ export function ProductsWidget({ title, sortBy = 'popular', limit = 10 }: Produc
         <div className="mb-12">
             {/* Title */}
             <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-slate-900">{title}</h2>
+                <h2 className="text-2xl font-bold text-black">{title}</h2>
                 <button className="text-[#7000ff] font-medium hover:underline">
                     Barchasini ko'rish
                 </button>

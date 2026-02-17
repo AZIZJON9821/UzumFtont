@@ -11,7 +11,7 @@ export default function Home() {
 
         {/* Kategoriyalar */}
         <div className="my-8">
-          <h2 className="text-xl font-bold text-slate-900 mb-4">Kategoriyalar</h2>
+          <h2 className="text-xl font-bold text-black mb-4">Kategoriyalar</h2>
           <CategorySlider />
         </div>
 
