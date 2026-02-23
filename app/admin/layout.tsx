@@ -9,6 +9,7 @@ import {
   Settings,
   ShoppingCart,
   Users,
+  MapPin,
   ArrowLeft,
 } from 'lucide-react';
 import { useAuth } from '@/components/providers/AuthProvider';
@@ -72,33 +73,29 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           <nav className="flex-1 p-4 space-y-1">
             <Link
               href="/admin"
-              className={`flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                pathname === '/admin'
-                  ? 'bg-[#7000ff] text-white'
-                  : 'text-black hover:bg-slate-100'
-              }`}
+              className={`flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors ${pathname === '/admin'
+                ? 'bg-[#7000ff] text-white'
+                : 'text-black hover:bg-slate-100'
+                }`}
             >
               <LayoutDashboard
-                className={`h-5 w-5 ${
-                  pathname === '/admin' ? 'text-white' : 'text-slate-900'
-                }`}
+                className={`h-5 w-5 ${pathname === '/admin' ? 'text-white' : 'text-slate-900'
+                  }`}
               />
               Boshqaruv paneli
             </Link>
             <Link
               href="/admin/products"
-              className={`flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                pathname.startsWith('/admin/products')
-                  ? 'bg-[#7000ff] text-white'
-                  : 'text-black hover:bg-slate-100'
-              }`}
+              className={`flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors ${pathname.startsWith('/admin/products')
+                ? 'bg-[#7000ff] text-white'
+                : 'text-black hover:bg-slate-100'
+                }`}
             >
               <Package
-                className={`h-5 w-5 ${
-                  pathname.startsWith('/admin/products')
-                    ? 'text-white'
-                    : 'text-slate-900'
-                }`}
+                className={`h-5 w-5 ${pathname.startsWith('/admin/products')
+                  ? 'text-white'
+                  : 'text-slate-900'
+                  }`}
               />
               <div className="flex-1">Mahsulotlar</div>
               {pathname.startsWith('/admin/products') && (
@@ -107,54 +104,63 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             </Link>
             <Link
               href="/admin/orders"
-              className={`flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                pathname.startsWith('/admin/orders')
-                  ? 'bg-[#7000ff] text-white'
-                  : 'text-black hover:bg-slate-100'
-              }`}
+              className={`flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors ${pathname.startsWith('/admin/orders')
+                ? 'bg-[#7000ff] text-white'
+                : 'text-black hover:bg-slate-100'
+                }`}
             >
               <ShoppingCart
-                className={`h-5 w-5 ${
-                  pathname.startsWith('/admin/orders')
-                    ? 'text-white'
-                    : 'text-slate-900'
-                }`}
+                className={`h-5 w-5 ${pathname.startsWith('/admin/orders')
+                  ? 'text-white'
+                  : 'text-slate-900'
+                  }`}
               />
               Buyurtmalar
             </Link>
             <Link
               href="/admin/users"
-              className={`flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                pathname.startsWith('/admin/users')
-                  ? 'bg-[#7000ff] text-white'
-                  : 'text-black hover:bg-slate-100'
-              }`}
+              className={`flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors ${pathname.startsWith('/admin/users')
+                ? 'bg-[#7000ff] text-white'
+                : 'text-black hover:bg-slate-100'
+                }`}
             >
               <Users
-                className={`h-5 w-5 ${
-                  pathname.startsWith('/admin/users')
-                    ? 'text-white'
-                    : 'text-slate-900'
-                }`}
+                className={`h-5 w-5 ${pathname.startsWith('/admin/users')
+                  ? 'text-white'
+                  : 'text-slate-900'
+                  }`}
               />
               Foydalanuvchilar
+            </Link>
+            <Link
+              href="/admin/pickup-points"
+              className={`flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors ${pathname.startsWith('/admin/pickup-points')
+                ? 'bg-[#7000ff] text-white'
+                : 'text-black hover:bg-slate-100'
+                }`}
+            >
+              <MapPin
+                className={`h-5 w-5 ${pathname.startsWith('/admin/pickup-points')
+                  ? 'text-white'
+                  : 'text-slate-900'
+                  }`}
+              />
+              Olib ketish nuqtalari
             </Link>
           </nav>
           <div className="p-4 border-t">
             <Link
               href="/admin/settings"
-              className={`flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
-                pathname.startsWith('/admin/settings')
-                  ? 'bg-[#7000ff] text-white'
-                  : 'text-black hover:bg-slate-100'
-              }`}
+              className={`flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md transition-colors ${pathname.startsWith('/admin/settings')
+                ? 'bg-[#7000ff] text-white'
+                : 'text-black hover:bg-slate-100'
+                }`}
             >
               <Settings
-                className={`h-5 w-5 ${
-                  pathname.startsWith('/admin/settings')
-                    ? 'text-white'
-                    : 'text-slate-900'
-                }`}
+                className={`h-5 w-5 ${pathname.startsWith('/admin/settings')
+                  ? 'text-white'
+                  : 'text-slate-900'
+                  }`}
               />
               Sozlamalar
             </Link>

@@ -1,22 +1,57 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { useCart } from '@/lib/contexts/CartContext';
 import { PaymentMethod } from '@/components/checkout/PaymentMethod';
 import { ordersApi } from '@/lib/api/orders';
+import { pickupPointsApi, PickupPoint } from '@/lib/api/pickup-points';
 import { showToast } from '@/components/ui/Toast';
 import { LoadingPage } from '@/components/ui/Loading';
-import { ShoppingBag, MapPin, CreditCard, CheckCircle } from 'lucide-react';
+import { ShoppingBag, MapPin, CreditCard, CheckCircle, Truck, Search, ChevronDown } from 'lucide-react';
 import type { PaymentMethod as PaymentMethodType } from '@/lib/types';
+
+// Dynamically import Map
+const Map = dynamic(() => import('@/components/ui/Map'), {
+  ssr: false,
+  loading: () => <div className="h-40 bg-slate-100 animate-pulse flex items-center justify-center rounded-lg">Xarita yuklanmoqda...</div>
+});
 
 export default function CheckoutPage() {
   const router = useRouter();
   const { cart, totalAmount, itemCount, clearCart } = useCart();
 
-  const [selectedPaymentMethod, setSelectedPaymentMethod] =
-    useState<PaymentMethodType>('CASH');
+  const [deliveryType, setDeliveryType] = useState<'DELIVERY' | 'PICKUP'>('DELIVERY');
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethodType>('CASH');
   const [submitting, setSubmitting] = useState(false);
+
+  const [pickupPoints, setPickupPoints] = useState<PickupPoint[]>([]);
+  const [selectedPickupPoint, setSelectedPickupPoint] = useState<PickupPoint | null>(null);
+  const [loadingPoints, setLoadingPoints] = useState(false);
+  const [isPointsOpen, setIsPointsOpen] = useState(false);
+  const [pointSearchQuery, setPointSearchQuery] = useState('');
+
+  useEffect(() => {
+    if (deliveryType === 'PICKUP') {
+      loadPickupPoints();
+    }
+  }, [deliveryType]);
+
+  const loadPickupPoints = async () => {
+    try {
+      setLoadingPoints(true);
+      const data = await pickupPointsApi.getAll({ isActive: true });
+      setPickupPoints(data);
+      if (data.length > 0 && !selectedPickupPoint) {
+        setSelectedPickupPoint(data[0]);
+      }
+    } catch (error) {
+      showToast('Olib ketish nuqtalarini yuklashda xatolik', 'error');
+    } finally {
+      setLoadingPoints(false);
+    }
+  };
 
   const items = cart?.items || [];
 
@@ -44,20 +79,24 @@ export default function CheckoutPage() {
     );
   }
 
-  const deliveryFee = totalAmount >= 50000 ? 0 : 15000;
+  const deliveryFee = deliveryType === 'DELIVERY' ? (totalAmount >= 50000 ? 0 : 15000) : 0;
   const finalTotal = totalAmount + deliveryFee;
 
   const handleSubmit = async () => {
     try {
+      if (deliveryType === 'PICKUP' && !selectedPickupPoint) {
+        showToast('Iltimos, olib ketish nuqtasini tanlang', 'error');
+        return;
+      }
+
       setSubmitting(true);
-      
-      // Use a static address ID - this will be handled by the backend
-      // Since we need to send a real address ID to avoid 500 errors, we'll need to implement
-      // this differently. Let's create a static address for all users on the backend.
+
       await ordersApi.create({
-        addressId: 'static-default-address-id',
+        addressId: deliveryType === 'DELIVERY' ? 'static-default-address-id' : undefined,
+        pickupPointId: deliveryType === 'PICKUP' ? selectedPickupPoint?.id : undefined,
+        deliveryType: deliveryType,
         paymentMethod: selectedPaymentMethod,
-      });
+      } as any);
 
       showToast('Buyurtma qabul qilindi!', 'success');
       await clearCart();
@@ -81,50 +120,152 @@ export default function CheckoutPage() {
         </h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Static Address Display */}
+            {/* Delivery Type Toggle */}
+            <div className="bg-white rounded-lg p-6">
+              <h2 className="text-xl font-bold text-slate-900 mb-4">Yetkazib berish turi</h2>
+              <div className="grid grid-cols-2 gap-4">
+                <button
+                  onClick={() => setDeliveryType('DELIVERY')}
+                  className={`flex items-center justify-center gap-3 p-4 rounded-xl border-2 transition-all ${deliveryType === 'DELIVERY'
+                    ? 'border-[#7000ff] bg-[#7000ff]/5 text-[#7000ff]'
+                    : 'border-slate-100 hover:border-slate-200 text-slate-600'
+                    }`}
+                >
+                  <Truck className="h-6 w-6" />
+                  <span className="font-bold">Kuryer orqali</span>
+                </button>
+                <button
+                  onClick={() => setDeliveryType('PICKUP')}
+                  className={`flex items-center justify-center gap-3 p-4 rounded-xl border-2 transition-all ${deliveryType === 'PICKUP'
+                    ? 'border-[#7000ff] bg-[#7000ff]/5 text-[#7000ff]'
+                    : 'border-slate-100 hover:border-slate-200 text-slate-600'
+                    }`}
+                >
+                  <MapPin className="h-6 w-6" />
+                  <span className="font-bold">Olib ketish nuqtasi</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Address or Pickup Point Selection */}
             <div className="bg-white rounded-lg p-6">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 bg-[#7000ff]/10 rounded-full flex items-center justify-center">
                   <MapPin className="h-5 w-5 text-[#7000ff]" />
                 </div>
                 <h2 className="text-xl font-bold text-slate-900">
-                  Yetkazib berish manzili
+                  {deliveryType === 'DELIVERY' ? 'Yetkazib berish manzili' : 'Olib ketish nuqtasini tanlang'}
                 </h2>
               </div>
 
-              {/* Dynamic address */}
-              <div className="border-2 border-[#7000ff]/5 bg-[#7000ff]/5 rounded-lg p-4">
-                <div className="flex items-start gap-3">
-                  <div className="p-2 bg-[#7000ff]/10 rounded-lg mt-1">
-                    <MapPin className="h-5 w-5 text-[#7000ff]" />
-                  </div>
-                  <div>
-                    <>
+              {deliveryType === 'DELIVERY' ? (
+                <div className="border-2 border-[#7000ff]/5 bg-[#7000ff]/5 rounded-lg p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="p-2 bg-[#7000ff]/10 rounded-lg mt-1">
+                      <MapPin className="h-5 w-5 text-[#7000ff]" />
+                    </div>
+                    <div>
                       <h4 className="font-semibold text-slate-900 mb-1">Tashkent, Yunusobod tumani</h4>
                       <p className="text-sm text-slate-600 mb-2">Amir Temur ko'chasi, 123-uy</p>
-                      <div className="h-40 bg-gray-200 rounded-lg relative overflow-hidden">
-                        <iframe 
-                          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3038.775342649475!2d69.2401!3d41.2995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDHCsDE3JzM4LjIiTiA2OcKwMTQnMjQuNCJF!5e0!3m2!1sen!2s!4v1234567890123!5m2!1sen!2s" 
-                          width="100%" 
-                          height="100%" 
-                          style={{border: 0}} 
-                          allowFullScreen={false} 
-                          loading="lazy" 
-                          referrerPolicy="no-referrer-when-downgrade"
-                          title="Location Map"
-                        ></iframe>
-                      </div>
-                    </>
+                    </div>
                   </div>
                 </div>
-              </div>
+              ) : (
+                <div className="space-y-4">
+                  {loadingPoints ? (
+                    <div className="h-40 bg-slate-50 animate-pulse rounded-lg" />
+                  ) : (
+                    <>
+                      {/* Custom Dropdown Selection */}
+                      <div className="relative">
+                        <label className="block text-sm font-medium text-slate-700 mb-1">
+                          Topshirish punkti
+                        </label>
+                        <div className="relative mt-1">
+                          <div
+                            className="w-full bg-white border border-slate-300 rounded-lg py-3 px-4 flex items-center justify-between cursor-pointer hover:border-[#7000ff] transition-colors"
+                            onClick={() => setIsPointsOpen(!isPointsOpen)}
+                          >
+                            <span className={selectedPickupPoint ? 'text-slate-900 font-medium' : 'text-slate-400'}>
+                              {selectedPickupPoint ? selectedPickupPoint.name : 'Punktni tanlang'}
+                            </span>
+                            <ChevronDown className={`h-5 w-5 text-slate-400 transition-transform ${isPointsOpen ? 'rotate-180' : ''}`} />
+                          </div>
 
-              <p className="text-sm text-gray-600 mt-3">
-                Bu sizning standart yetkazib berish manzilingiz. Buyurtmangiz
-                ushbu manzilga yetkaziladi.
-              </p>
+                          {isPointsOpen && (
+                            <div className="absolute z-[2000] mt-2 w-full bg-white border border-slate-200 rounded-lg shadow-xl overflow-hidden animate-in fade-in zoom-in duration-200">
+                              <div className="p-3 border-b border-slate-100 bg-slate-50">
+                                <div className="relative">
+                                  <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                                  <input
+                                    type="text"
+                                    placeholder="Qidiruv..."
+                                    className="w-full pl-9 pr-4 py-2 text-sm border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-[#7000ff]/20 focus:border-[#7000ff]"
+                                    value={pointSearchQuery}
+                                    onChange={(e) => setPointSearchQuery(e.target.value)}
+                                    autoFocus
+                                  />
+                                </div>
+                              </div>
+                              <div className="max-h-60 overflow-y-auto">
+                                {pickupPoints
+                                  .filter(p =>
+                                    p.name.toLowerCase().includes(pointSearchQuery.toLowerCase()) ||
+                                    p.address.toLowerCase().includes(pointSearchQuery.toLowerCase())
+                                  )
+                                  .map((point) => (
+                                    <div
+                                      key={point.id}
+                                      className={`px-4 py-3 cursor-pointer hover:bg-slate-50 transition-colors ${selectedPickupPoint?.id === point.id ? 'bg-[#7000ff]/5 border-l-4 border-l-[#7000ff]' : ''}`}
+                                      onClick={() => {
+                                        setSelectedPickupPoint(point);
+                                        setIsPointsOpen(false);
+                                        setPointSearchQuery('');
+                                      }}
+                                    >
+                                      <div className="font-bold text-slate-900 text-sm">{point.name}</div>
+                                      <div className="text-xs text-slate-500 mt-0.5 line-clamp-1">{point.address}</div>
+                                    </div>
+                                  ))}
+                                {pickupPoints.filter(p =>
+                                  p.name.toLowerCase().includes(pointSearchQuery.toLowerCase()) ||
+                                  p.address.toLowerCase().includes(pointSearchQuery.toLowerCase())
+                                ).length === 0 && (
+                                    <div className="px-4 py-8 text-center text-slate-400 text-sm">
+                                      Hech narsa topilmadi
+                                    </div>
+                                  )}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {selectedPickupPoint && (
+                        <div className="space-y-3">
+                          <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
+                            <h4 className="font-bold text-slate-900 text-sm">{selectedPickupPoint.name}</h4>
+                            <p className="text-xs text-slate-600 mt-1">{selectedPickupPoint.address}</p>
+                          </div>
+                          <div className="h-60 rounded-lg overflow-hidden border border-slate-200">
+                            <Map
+                              center={[selectedPickupPoint.lat, selectedPickupPoint.lng]}
+                              zoom={15}
+                              readOnly={true}
+                              markers={pickupPoints.map(p => ({
+                                lat: p.lat,
+                                lng: p.lng,
+                                label: p.name
+                              }))}
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Payment Method */}
@@ -144,14 +285,12 @@ export default function CheckoutPage() {
             </div>
           </div>
 
-          {/* Order Summary */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg p-6 sticky top-20">
               <h3 className="text-xl font-bold text-slate-900 mb-4">
                 Buyurtma
               </h3>
 
-              {/* Items */}
               <div className="space-y-3 mb-4 max-h-60 overflow-y-auto">
                 {items.map((item) => (
                   <div key={item.id} className="flex gap-3 text-sm">
@@ -161,17 +300,12 @@ export default function CheckoutPage() {
                       </p>
                       <p className="text-slate-500">
                         {item.quantity} x{' '}
-                        {(
-                          item.variant.discountPrice || item.variant.price
-                        ).toLocaleString('uz-UZ')}{' '}
+                        {(item.variant.discountPrice || item.variant.price).toLocaleString('uz-UZ')}{' '}
                         so'm
                       </p>
                     </div>
                     <p className="font-semibold text-slate-900">
-                      {(
-                        (item.variant.discountPrice || item.variant.price) *
-                        item.quantity
-                      ).toLocaleString('uz-UZ')}{' '}
+                      {((item.variant.discountPrice || item.variant.price) * item.quantity).toLocaleString('uz-UZ')}{' '}
                       so'm
                     </p>
                   </div>
@@ -185,14 +319,8 @@ export default function CheckoutPage() {
                 </div>
                 <div className="flex justify-between text-slate-700">
                   <span>Yetkazib berish:</span>
-                  <span
-                    className={
-                      deliveryFee === 0 ? 'text-green-600 font-semibold' : ''
-                    }
-                  >
-                    {deliveryFee === 0
-                      ? 'Bepul'
-                      : `${deliveryFee.toLocaleString('uz-UZ')} so'm`}
+                  <span className={deliveryFee === 0 ? 'text-green-600 font-semibold' : ''}>
+                    {deliveryFee === 0 ? 'Bepul' : `${deliveryFee.toLocaleString('uz-UZ')} so'm`}
                   </span>
                 </div>
               </div>
@@ -208,7 +336,7 @@ export default function CheckoutPage() {
 
               <button
                 onClick={handleSubmit}
-                disabled={submitting}
+                disabled={submitting || (deliveryType === 'PICKUP' && !selectedPickupPoint)}
                 className="w-full bg-[#7000ff] hover:bg-[#5c00d9] text-white py-4 rounded-lg font-bold text-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 <CheckCircle className="h-6 w-6" />
