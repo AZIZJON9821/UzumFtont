@@ -28,7 +28,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
 
     // Mahsulot wishlist'da bormi tekshirish
     const isInWishlist = (productId: string): boolean => {
-        return wishlist?.products?.some(p => p.id === productId) || false;
+        return wishlist?.products?.some((p: Product) => p.id === productId) || false;
     };
 
     // Wishlist'ni yuklash
@@ -63,7 +63,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
             setError(null);
             const updatedWishlist = await wishlistApi.toggle(productId);
             setWishlist(updatedWishlist);
-            return updatedWishlist.products.some(p => p.id === productId);
+            return updatedWishlist.products.some((p: Product) => p.id === productId);
         } catch (err: any) {
             setError(err.response?.data?.message || 'Amalni bajarishda xatolik');
             throw err;
