@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:3002', // Backend URL
+  baseURL: 'https://uzumbec.onrender.com', // Backend URL
   headers: {
     'Content-Type': 'application/json',
   },
