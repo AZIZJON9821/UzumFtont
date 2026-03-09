@@ -46,7 +46,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col w-full overflow-x-hidden">
+    <div className="min-h-screen bg-slate-50 flex flex-col w-full max-w-none overflow-x-hidden relative">
       {/* Admin Top Bar */}
       <header className="bg-white border-b h-16 flex items-center justify-between px-6 sticky top-0 z-40">
         <div className="flex items-center gap-4">

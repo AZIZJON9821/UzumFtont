@@ -41,7 +41,7 @@ export default function RootLayout({
             <CartProvider>
               <WishlistProvider>
                 <ToastContainer />
-                <div className="flex min-h-screen flex-col w-full overflow-x-hidden">
+                <div className="flex min-h-screen flex-col w-full max-w-none overflow-x-hidden relative">
                   <Header />
                   <main className="flex-1 pb-20 md:pb-0 px-4 md:px-0">
                     {children}
