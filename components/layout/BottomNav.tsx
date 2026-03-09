@@ -3,19 +3,24 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Search, ShoppingBag, Heart, User } from 'lucide-react';
+import { Home, Search, ShoppingBag, Heart, User, LayoutDashboard, ShieldCheck } from 'lucide-react';
 import { useCart } from '@/lib/contexts/CartContext';
 import { useWishlist } from '@/lib/contexts/WishlistContext';
+import { useAuth } from '../providers/AuthProvider';
 
 export function BottomNav() {
     const pathname = usePathname();
+    const { user } = useAuth();
     const { itemCount: cartCount } = useCart();
     const { itemCount: wishlistCount } = useWishlist();
+
+    const isAdmin = user && ['ADMIN', 'SUPER_ADMIN', 'MODERATOR'].includes(user.role?.toUpperCase());
 
     const navItems = [
         { label: 'Bosh sahifa', icon: Home, href: '/' },
         { label: 'Katalog', icon: Search, href: '/catalog' },
         { label: 'Savat', icon: ShoppingBag, href: '/cart', count: cartCount },
+        ...(isAdmin ? [{ label: 'Admin', icon: LayoutDashboard, href: '/admin' }] : []),
         { label: 'Saralangan', icon: Heart, href: '/wishlist', count: wishlistCount },
         { label: 'Kabinet', icon: User, href: '/profile' },
     ];

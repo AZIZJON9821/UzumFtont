@@ -99,7 +99,7 @@ export function Header() {
                         <div className="h-3 w-[1px] bg-slate-300 dark:bg-slate-700"></div>
 
                         {/* Admin Panel Button */}
-                        {user && ['ADMIN', 'SUPER_ADMIN', 'MODERATOR'].includes(user.role) && (
+                        {user && ['ADMIN', 'SUPER_ADMIN', 'MODERATOR'].includes(user.role?.toUpperCase()) && (
                             <Link
                                 href="/admin"
                                 className="flex items-center gap-1.5 text-[#7000ff] font-bold hover:opacity-80 transition-opacity px-2 py-0.5 bg-[#7000ff]/5 rounded-md"

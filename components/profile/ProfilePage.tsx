@@ -133,7 +133,7 @@ export default function ProfilePageComponent() {
                 ))}
 
                 {/* Admin Panel Link in Profile Sidebar */}
-                {user && ['ADMIN', 'SUPER_ADMIN', 'MODERATOR'].includes(user.role) && (
+                {user && ['ADMIN', 'SUPER_ADMIN', 'MODERATOR'].includes(user.role?.toUpperCase()) && (
                   <button
                     onClick={() => router.push('/admin')}
                     className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-[#7000ff] hover:bg-[#7000ff]/5 transition-all mt-2 border border-dashed border-[#7000ff]/20"
