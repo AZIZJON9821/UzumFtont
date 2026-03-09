@@ -31,7 +31,25 @@ api.interceptors.request.use(
 // Response interceptor - xatolarni boshqarish
 api.interceptors.response.use(
     (response) => response,
-    (error) => {
+    async (error) => {
+        const config = error.config;
+
+        // Auto retry logic (max 3 retries)
+        if (config && (!config._retryCount || config._retryCount < 3)) {
+            // Check if it's a network error or 5xx server error
+            if (!error.response || error.code === 'ERR_NETWORK' || error.response.status >= 500) {
+                config._retryCount = config._retryCount ? config._retryCount + 1 : 1;
+
+                // Backoff delay: 1s, 2s, 3s...
+                const delayRetryRequest = new Promise<void>((resolve) => {
+                    setTimeout(() => resolve(), config._retryCount * 1200);
+                });
+
+                await delayRetryRequest;
+                return api(config);
+            }
+        }
+
         // 401 bo'lganda avtomatik redirectni olib tashlaymiz, 
         // chunki bu AuthProvider'da boshqariladi.
         if (error.response?.status === 401) {
