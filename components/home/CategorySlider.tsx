@@ -98,11 +98,11 @@ export function CategorySlider() {
 
                                     {category.icon ? (
                                         category.icon.startsWith('http') ? (
-                                            <div className="relative w-full h-full p-4 md:p-5 z-10 transition-transform duration-500 group-hover/item:scale-110">
+                                            <div className="relative w-full h-full z-10 transition-transform duration-500 group-hover/item:scale-110">
                                                 <img
                                                     src={category.icon}
                                                     alt={category.name}
-                                                    className="w-full h-full object-contain drop-shadow-md"
+                                                    className="w-full h-full object-cover"
                                                 />
                                             </div>
                                         ) : (

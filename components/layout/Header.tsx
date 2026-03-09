@@ -98,16 +98,6 @@ export function Header() {
                         <span className="text-slate-400 dark:text-slate-500">Buyurtmangizni 1 kunda yetkazib beramiz</span>
                         <div className="h-3 w-[1px] bg-slate-300 dark:bg-slate-700"></div>
 
-                        {/* Admin Panel Button */}
-                        {user && ['ADMIN', 'SUPER_ADMIN', 'MODERATOR'].includes(user.role?.toUpperCase()) && (
-                            <Link
-                                href="/admin"
-                                className="flex items-center gap-1.5 text-[#7000ff] font-bold hover:opacity-80 transition-opacity px-2 py-0.5 bg-[#7000ff]/5 rounded-md"
-                            >
-                                <LayoutDashboard className="h-3.5 w-3.5" />
-                                <span>Admin Panel</span>
-                            </Link>
-                        )}
 
                         <span className="cursor-pointer hover:text-black dark:hover:text-white transition-colors">Savol-javoblar</span>
                         <span className="cursor-pointer hover:text-black dark:hover:text-white transition-colors">Buyurtmalarim</span>
@@ -208,15 +198,11 @@ export function Header() {
 
                     {/* User Actions (Visible in header on desktop, mobile hidden via responsive classes if needed) */}
                     <div className="hidden md:flex items-center gap-6 shrink-0">
-                        {user ? (
-                            <Link href="/profile" className="flex items-center gap-2 text-black hover:text-[#7000ff] group">
-                                <User className="h-6 w-6" />
-                                <span className="text-sm font-medium truncate max-w-[100px]">{user.fullName || "Kabinet"}</span>
-                            </Link>
-                        ) : (
-                            <Link href="/auth/login" className="flex items-center gap-2 text-black hover:text-[#7000ff] group">
-                                <User className="h-6 w-6" />
-                                <span className="text-sm font-medium">Kirish</span>
+                        {/* Admin Icon (Repositioned and changed to Shield) */}
+                        {user && ['ADMIN', 'SUPER_ADMIN', 'MODERATOR'].includes(user.role?.toUpperCase()) && (
+                            <Link href="/admin" className="flex items-center gap-2 text-slate-500 hover:text-[#7000ff] group">
+                                <ShieldCheck className="h-6 w-6" />
+                                <span className="text-sm font-medium">Admin</span>
                             </Link>
                         )}
 

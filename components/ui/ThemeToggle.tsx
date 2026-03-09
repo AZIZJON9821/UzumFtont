@@ -16,9 +16,6 @@ export function ThemeToggle() {
                 <Sun className={`h-4 w-4 text-orange-500 transition-all duration-500 ${theme === 'dark' ? 'rotate-90 scale-0 opacity-0' : 'rotate-0 scale-100 opacity-100'}`} />
                 <Moon className={`absolute h-4 w-4 text-blue-400 transition-all duration-500 ${theme === 'light' ? '-rotate-90 scale-0 opacity-0' : 'rotate-0 scale-100 opacity-100'}`} />
             </div>
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                {theme === 'light' ? 'Good' : 'Night'}
-            </span>
         </button>
     );
 }
