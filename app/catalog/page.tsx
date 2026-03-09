@@ -8,7 +8,7 @@ import { FilterSidebar } from '@/components/catalog/FilterSidebar';
 import { SortDropdown } from '@/components/catalog/SortDropdown';
 import { productsApi } from '@/lib/api/products';
 import type { Product, ProductFilters } from '@/lib/types';
-import { SlidersHorizontal } from 'lucide-react';
+import { SlidersHorizontal, X } from 'lucide-react';
 
 function CatalogContent() {
     const searchParams = useSearchParams();
@@ -75,9 +75,30 @@ function CatalogContent() {
                     </div>
                 </div>
 
-                <div className="flex gap-6">
+                <div className="flex gap-6 relative">
+                    {/* Filters Mobile Overlay (Backdrop) */}
+                    {showFilters && (
+                        <div
+                            className="fixed inset-0 bg-black/50 z-50 lg:hidden"
+                            onClick={() => setShowFilters(false)}
+                        />
+                    )}
+
                     {/* Filters Sidebar */}
-                    <div className={`${showFilters ? 'block' : 'hidden'} lg:block w-full lg:w-64 flex-shrink-0`}>
+                    <div className={`
+                        ${showFilters ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+                        fixed lg:relative inset-y-0 left-0 z-50 lg:z-0
+                        w-80 lg:w-64 bg-white lg:bg-transparent
+                        transition-transform duration-300 ease-in-out
+                        overflow-y-auto lg:overflow-visible
+                        lg:block flex-shrink-0
+                    `}>
+                        <div className="lg:hidden p-4 border-b flex justify-between items-center bg-white sticky top-0 z-10">
+                            <h3 className="font-bold text-lg">Filterlar</h3>
+                            <button onClick={() => setShowFilters(false)} className="p-2 hover:bg-slate-100 rounded-full">
+                                <X className="h-6 w-6" />
+                            </button>
+                        </div>
                         <FilterSidebar filters={filters} onChange={handleFilterChange} />
                     </div>
 

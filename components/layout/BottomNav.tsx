@@ -3,7 +3,8 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Search, ShoppingBag, Heart, User } from 'lucide-react';
+import { Home, Search, ShoppingBag, Heart, User, ShieldCheck } from 'lucide-react';
+import { useAuth } from '../providers/AuthProvider';
 import { useCart } from '@/lib/contexts/CartContext';
 import { useWishlist } from '@/lib/contexts/WishlistContext';
 
@@ -12,9 +13,13 @@ export function BottomNav() {
     const { itemCount: cartCount } = useCart();
     const { itemCount: wishlistCount } = useWishlist();
 
+    const { user } = useAuth();
+    const isAdmin = user && ['ADMIN', 'SUPER_ADMIN', 'MODERATOR'].includes(user.role?.toUpperCase());
+
     const navItems = [
         { label: 'Bosh sahifa', icon: Home, href: '/' },
         { label: 'Katalog', icon: Search, href: '/catalog' },
+        ...(isAdmin ? [{ label: 'Admin', icon: ShieldCheck, href: '/admin' }] : []),
         { label: 'Savat', icon: ShoppingBag, href: '/cart', count: cartCount },
         { label: 'Saralangan', icon: Heart, href: '/wishlist', count: wishlistCount },
         { label: 'Kabinet', icon: User, href: '/profile' },

@@ -70,7 +70,7 @@ export function FilterSidebar({ filters, onChange }: FilterSidebarProps) {
     };
 
     return (
-        <div className="bg-white rounded-lg border border-slate-200 p-4 sticky top-20">
+        <div className="bg-white rounded-lg border border-slate-200 p-4 lg:sticky lg:top-20 h-full lg:h-auto">
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
                 <h3 className="font-bold text-lg text-slate-900">Filterlar</h3>
@@ -138,8 +138,8 @@ export function FilterSidebar({ filters, onChange }: FilterSidebarProps) {
                             key={color.id}
                             onClick={() => toggleColor(color.id)}
                             className={`w-10 h-10 rounded-full border-2 transition-all ${filters.colorIds?.includes(color.id)
-                                    ? 'border-[#7000ff] scale-110'
-                                    : 'border-slate-300 hover:border-slate-400'
+                                ? 'border-[#7000ff] scale-110'
+                                : 'border-slate-300 hover:border-slate-400'
                                 }`}
                             style={{ backgroundColor: color.hexCode }}
                             title={color.name}
@@ -157,8 +157,8 @@ export function FilterSidebar({ filters, onChange }: FilterSidebarProps) {
                             key={size.id}
                             onClick={() => toggleSize(size.id)}
                             className={`px-4 py-2 rounded-lg border text-sm font-medium transition-all ${filters.sizeIds?.includes(size.id)
-                                    ? 'bg-[#7000ff] text-white border-[#7000ff]'
-                                    : 'bg-white text-slate-700 border-slate-300 hover:border-[#7000ff]'
+                                ? 'bg-[#7000ff] text-white border-[#7000ff]'
+                                : 'bg-white text-slate-700 border-slate-300 hover:border-[#7000ff]'
                                 }`}
                         >
                             {size.name}

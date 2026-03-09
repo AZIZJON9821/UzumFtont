@@ -46,7 +46,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
+    <div className="min-h-screen bg-slate-50 flex flex-col w-full overflow-x-hidden">
       {/* Admin Top Bar */}
       <header className="bg-white border-b h-16 flex items-center justify-between px-6 sticky top-0 z-40">
         <div className="flex items-center gap-4">
@@ -67,9 +67,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </div>
       </header>
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-x-hidden overflow-y-auto">
         {/* Admin Sidebar */}
-        <aside className="w-64 bg-white border-r flex-col hidden md:flex">
+        <aside className="w-64 bg-white border-r flex-col hidden lg:flex">
           <nav className="flex-1 p-4 space-y-1">
             <Link
               href="/admin"

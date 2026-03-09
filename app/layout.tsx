@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
@@ -21,6 +21,13 @@ export const metadata: Metadata = {
   description: "O'zbekistondagi eng tezkor internet do'kon",
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -34,7 +41,7 @@ export default function RootLayout({
             <CartProvider>
               <WishlistProvider>
                 <ToastContainer />
-                <div className="flex min-h-screen flex-col">
+                <div className="flex min-h-screen flex-col w-full overflow-x-hidden">
                   <Header />
                   <main className="flex-1 pb-20 md:pb-0 px-4 md:px-0">
                     {children}
