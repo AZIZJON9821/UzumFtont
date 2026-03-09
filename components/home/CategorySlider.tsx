@@ -50,63 +50,86 @@ export function CategorySlider() {
     }
 
     return (
-        <div className="relative group">
-            {/* Scroll buttons */}
-            <button
-                onClick={() => scroll('left')}
-                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-slate-50"
-            >
-                <ChevronLeft className="h-5 w-5 text-slate-700" />
-            </button>
+        <div className="relative group py-6">
+            {/* Header with Title & Navigation */}
+            <div className="flex items-center justify-between mb-6 px-2">
+                <h2 className="text-xl md:text-2xl font-bold text-black dark:text-white flex items-center gap-2">
+                    Ommabop kategoriyalar
+                </h2>
+                <div className="flex gap-2">
+                    <button
+                        onClick={() => scroll('left')}
+                        className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm p-2 rounded-full hover:bg-slate-50 dark:hover:bg-slate-700 transition-all hover:scale-105"
+                    >
+                        <ChevronLeft className="h-5 w-5 text-slate-700 dark:text-slate-300" />
+                    </button>
+                    <button
+                        onClick={() => scroll('right')}
+                        className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm p-2 rounded-full hover:bg-slate-50 dark:hover:bg-slate-700 transition-all hover:scale-105"
+                    >
+                        <ChevronRight className="h-5 w-5 text-slate-700 dark:text-slate-300" />
+                    </button>
+                </div>
+            </div>
 
-            <button
-                onClick={() => scroll('right')}
-                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-slate-50"
-            >
-                <ChevronRight className="h-5 w-5 text-slate-700" />
-            </button>
-
-            {/* Categories */}
+            {/* Categories Grid/Slider */}
             <div
                 ref={scrollRef}
-                className="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-2"
+                className="flex gap-4 md:gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-4 px-2"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
-                {categories.map((category) => (
-                    <Link
-                        key={category.id}
-                        href={`/catalog?category=${category.id}`}
-                        className="flex-shrink-0 group/item"
-                    >
-                        <div className="flex flex-col items-center gap-2 w-24">
-                            {/* Icon */}
-                            <div className="w-20 h-20 bg-gradient-to-br from-[#7000ff]/10 to-[#7000ff]/20 rounded-full flex items-center justify-center group-hover/item:from-[#7000ff]/20 group-hover/item:to-[#7000ff]/30 transition-all duration-200 group-hover/item:scale-110 overflow-hidden relative">
-                                {category.icon ? (
-                                    category.icon.startsWith('http') ? (
-                                        <div className="relative w-full h-full p-3">
-                                            <img
-                                                src={category.icon}
-                                                alt={category.name}
-                                                className="w-full h-full object-contain"
-                                            />
-                                        </div>
-                                    ) : (
-                                        <span className="text-3xl">{category.icon}</span>
-                                    )
-                                ) : (
-                                    <span className="text-2xl font-bold text-[#7000ff]">
-                                        {category.name[0]}
-                                    </span>
-                                )}
-                            </div>
+                {categories.map((category, index) => {
+                    const bgColors = [
+                        'bg-blue-50 dark:bg-blue-900/20',
+                        'bg-purple-50 dark:bg-purple-900/20',
+                        'bg-orange-50 dark:bg-orange-900/20',
+                        'bg-green-50 dark:bg-green-900/20',
+                        'bg-pink-50 dark:bg-pink-900/20',
+                        'bg-cyan-50 dark:bg-cyan-900/20'
+                    ];
+                    const bgColor = bgColors[index % bgColors.length];
 
-                            {/* Name */}
-                            <span className="text-xs text-center text-slate-700 font-medium line-clamp-2 group-hover/item:text-[#7000ff] transition-colors">
-                                {category.name}
-                            </span>
-                        </div>
-                    </Link>
-                ))}
+                    return (
+                        <Link
+                            key={category.id}
+                            href={`/catalog?category=${category.id}`}
+                            className="flex-shrink-0 group/item w-28 md:w-36"
+                        >
+                            <div className="flex flex-col items-center gap-3">
+                                {/* Card Container */}
+                                <div className={`w-full aspect-square ${bgColor} rounded-3xl flex items-center justify-center transition-all duration-300 group-hover/item:scale-105 group-hover/item:shadow-xl group-hover/item:border-2 group-hover/item:border-[#7000ff]/30 overflow-hidden relative border border-transparent shadow-sm`}>
+                                    {category.icon ? (
+                                        category.icon.startsWith('http') ? (
+                                            <div className="relative w-full h-full p-4 md:p-6">
+                                                <img
+                                                    src={category.icon}
+                                                    alt={category.name}
+                                                    className="w-full h-full object-contain transition-transform duration-500 group-hover/item:scale-110"
+                                                />
+                                            </div>
+                                        ) : (
+                                            <span className="text-4xl md:text-5xl drop-shadow-sm transition-transform duration-300 group-hover/item:scale-110">
+                                                {category.icon}
+                                            </span>
+                                        )
+                                    ) : (
+                                        <span className="text-3xl md:text-4xl font-bold text-[#7000ff] opacity-80 decoration-slice">
+                                            {category.name[0]}
+                                        </span>
+                                    )}
+
+                                    {/* Glass Overlay Effect */}
+                                    <div className="absolute inset-0 bg-white/0 group-hover/item:bg-white/5 transition-colors" />
+                                </div>
+
+                                {/* Name Label */}
+                                <span className="text-xs md:text-sm text-center text-slate-800 dark:text-slate-200 font-bold line-clamp-2 px-1 group-hover/item:text-[#7000ff] transition-colors leading-tight">
+                                    {category.name}
+                                </span>
+                            </div>
+                        </Link>
+                    );
+                })}
             </div>
         </div>
     );
