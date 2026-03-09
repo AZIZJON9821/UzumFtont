@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Search, ShoppingBag, Heart, User, Menu, ShieldCheck, X } from 'lucide-react';
+import { Search, ShoppingBag, Heart, User, Menu, ShieldCheck, X, ChevronRight } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { useAuth } from '../providers/AuthProvider';
 import { useCart } from '@/lib/contexts/CartContext';
