@@ -37,10 +37,10 @@ export function Header() {
             </div>
 
             <div className="border-b">
-                <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-6">
+                <div className="max-w-7xl mx-auto px-4 md:px-6 h-14 md:h-16 flex items-center justify-between gap-4 md:gap-6">
                     {/* Logo & Catalog */}
                     <div className="flex items-center gap-4 shrink-0">
-                        <Link href="/" className="text-3xl font-bold text-[#7000ff] tracking-tight">
+                        <Link href="/" className="text-2xl md:text-3xl font-bold text-[#7000ff] tracking-tight">
                             uzum market
                         </Link>
                     </div>
@@ -70,9 +70,9 @@ export function Header() {
                     </div>
 
                     {/* User Actions */}
-                    <div className="flex items-center gap-6 shrink-0">
+                    <div className="flex items-center gap-4 md:gap-6 shrink-0">
                         {user ? (
-                            <div className="flex items-center gap-4">
+                            <div className="hidden md:flex items-center gap-4">
                                 {['ADMIN', 'SUPER_ADMIN', 'MODERATOR'].includes(user.role) && (
                                     <Link href="/admin" className="text-black hover:text-[#7000ff]" title="Admin Panel">
                                         <ShieldCheck className="h-6 w-6" />
@@ -86,13 +86,13 @@ export function Header() {
                                 </Link>
                             </div>
                         ) : (
-                            <Link href="/auth/login" className="flex items-center gap-2 text-slate-700 hover:text-slate-900">
+                            <Link href="/auth/login" className="hidden md:flex items-center gap-2 text-slate-700 hover:text-slate-900">
                                 <User className="h-6 w-6" />
                                 <span className="text-sm font-medium hidden lg:inline">Kirish</span>
                             </Link>
                         )}
 
-                        <Link href="/wishlist" className="flex items-center gap-2 text-black hover:text-slate-900">
+                        <Link href="/wishlist" className="hidden md:flex items-center gap-2 text-black hover:text-slate-900">
                             <div className="relative">
                                 <Heart className="h-6 w-6" />
                                 {wishlistCount > 0 && (
@@ -104,7 +104,7 @@ export function Header() {
                             <span className="text-sm font-medium hidden lg:inline">Sevimlilar</span>
                         </Link>
 
-                        <Link href="/cart" className="flex items-center gap-2 text-black hover:text-slate-900">
+                        <Link href="/cart" className="hidden md:flex items-center gap-2 text-black hover:text-slate-900">
                             <div className="relative">
                                 <ShoppingBag className="h-6 w-6" />
                                 {cartCount > 0 && (

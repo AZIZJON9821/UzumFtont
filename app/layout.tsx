@@ -2,7 +2,12 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
+import { BottomNav } from "@/components/layout/BottomNav";
+import dynamic from 'next/dynamic';
+
+const Footer = dynamic(() => import('@/components/layout/Footer').then(mod => mod.Footer), {
+  ssr: true,
+});
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import { CartProvider } from "@/lib/contexts/CartContext";
 import { WishlistProvider } from "@/lib/contexts/WishlistContext";
@@ -31,9 +36,10 @@ export default function RootLayout({
                 <ToastContainer />
                 <div className="flex min-h-screen flex-col">
                   <Header />
-                  <main className="flex-1">
+                  <main className="flex-1 pb-20 md:pb-0 px-4 md:px-0">
                     {children}
                   </main>
+                  <BottomNav />
                   <Footer />
                 </div>
               </WishlistProvider>

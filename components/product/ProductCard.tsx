@@ -67,6 +67,7 @@ export function ProductCard({ product }: ProductCardProps) {
                             src={mainImage.url}
                             alt={product.name}
                             fill
+                            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
                             className="object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                     ) : (
@@ -90,27 +91,26 @@ export function ProductCard({ product }: ProductCardProps) {
                 </div>
 
                 {/* Ma'lumotlar */}
-                <div className="p-4 flex-1 flex flex-col">
+                <div className="p-3 md:p-4 flex-1 flex flex-col">
                     {/* Nomi */}
-                    <h3 className="text-sm font-medium text-black line-clamp-2 mb-2 group-hover:text-[#7000ff] transition-colors">
+                    <h3 className="text-xs md:text-sm font-medium text-black line-clamp-2 mb-2 group-hover:text-[#7000ff] transition-colors h-8 md:h-10">
                         {product.name}
                     </h3>
 
                     {/* Reyting */}
-                    <div className="flex items-center gap-1 mb-3">
-                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                        <span className="text-sm font-medium text-black">{product.rating.toFixed(1)}</span>
-                        {/* <span className="text-xs text-slate-500">({product.reviewCount})</span> */}
+                    <div className="flex items-center gap-1 mb-2 md:mb-3">
+                        <Star className="h-3 w-3 md:h-4 md:w-4 fill-yellow-400 text-yellow-400" />
+                        <span className="text-xs md:text-sm font-medium text-black">{product.rating.toFixed(1)}</span>
                     </div>
 
                     {/* Narx */}
                     <div className="mt-auto">
-                        <div className="flex items-baseline gap-2 mb-3">
-                            <span className="text-lg font-bold text-black">
+                        <div className="flex flex-col mb-2 md:mb-3">
+                            <span className="text-base md:text-lg font-bold text-black">
                                 {price.toLocaleString('uz-UZ')} so'm
                             </span>
                             {originalPrice && (
-                                <span className="text-sm text-slate-400 line-through">
+                                <span className="text-xs text-slate-400 line-through">
                                     {originalPrice.toLocaleString('uz-UZ')}
                                 </span>
                             )}
@@ -119,10 +119,10 @@ export function ProductCard({ product }: ProductCardProps) {
                         {/* Savatga qo'shish tugmasi */}
                         <button
                             onClick={handleAddToCart}
-                            className="w-full bg-[#7000ff] hover:bg-[#5c00d9] text-white py-2 px-4 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center gap-2"
+                            className="w-full bg-[#7000ff] hover:bg-[#5c00d9] text-white py-1.5 md:py-2 px-2 md:px-4 rounded-lg text-xs md:text-sm font-medium transition-colors duration-200 flex items-center justify-center gap-2 active:scale-95"
                         >
                             <ShoppingCart className="h-4 w-4" />
-                            Savatga
+                            <span className="hidden xs:inline">Savatga</span>
                         </button>
                     </div>
                 </div>

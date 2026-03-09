@@ -48,7 +48,7 @@ export function BannerSlider() {
     };
 
     return (
-        <div className="relative w-full h-[300px] md:h-[400px] rounded-2xl overflow-hidden group">
+        <div className="relative w-full h-[200px] sm:h-[250px] md:h-[400px] rounded-2xl overflow-hidden group shadow-md mt-4">
             {/* Banners */}
             <div
                 className="flex h-full transition-transform duration-500 ease-out"
@@ -57,12 +57,12 @@ export function BannerSlider() {
                 {banners.map((banner) => (
                     <div
                         key={banner.id}
-                        className={`min-w-full h-full bg-gradient-to-r ${banner.bgColor} flex items-center justify-center px-8 md:px-16`}
+                        className={`min-w-full h-full bg-gradient-to-r ${banner.bgColor} flex items-center justify-center px-6 md:px-16 relative overflow-hidden`}
                     >
-                        <div className="text-white max-w-2xl">
-                            <h2 className="text-3xl md:text-5xl font-bold mb-4">{banner.title}</h2>
-                            <p className="text-lg md:text-2xl mb-6">{banner.subtitle}</p>
-                            <button className="bg-white text-[#7000ff] px-8 py-3 rounded-lg font-bold hover:bg-slate-100 transition-colors">
+                        <div className="text-white relative z-10 w-full text-center md:text-left">
+                            <h2 className="text-xl sm:text-2xl md:text-5xl font-bold mb-2 md:mb-4">{banner.title}</h2>
+                            <p className="text-sm sm:text-base md:text-2xl mb-4 md:mb-6 opacity-90">{banner.subtitle}</p>
+                            <button className="bg-white text-[#7000ff] px-6 md:px-8 py-2 md:py-3 rounded-lg text-sm md:text-base font-bold hover:bg-slate-100 transition-all active:scale-95 shadow-md">
                                 Ko'rish
                             </button>
                         </div>
