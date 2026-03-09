@@ -56,13 +56,17 @@ export default function ProductForm({ initialData, productId }: ProductFormProps
         }
     }, [initialData]);
 
+    // State to persist ID in case of partial success (network failure after product created but before variant/images)
+    const [savedProductId, setSavedProductId] = useState<string | null>(null);
+    const [savedVariantId, setSavedVariantId] = useState<string | null>(null);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
 
         try {
-            let currentProductId = productId;
-            let currentVariantId = initialData?.variants?.[0]?.id;
+            let currentProductId = productId || savedProductId;
+            let currentVariantId = initialData?.variants?.[0]?.id || savedVariantId;
 
             // 1. Create or Update Product
             const productPayload = {
@@ -78,6 +82,7 @@ export default function ProductForm({ initialData, productId }: ProductFormProps
             } else {
                 const { data: newProduct } = await api.post('/products', productPayload);
                 currentProductId = newProduct.id;
+                setSavedProductId(currentProductId);
             }
 
             // Kichik tanaffus (Render serveri ulanishni yopib qo'ymasligi uchun)
@@ -86,7 +91,7 @@ export default function ProductForm({ initialData, productId }: ProductFormProps
             // 2. Create or Update Variant
             const variantPayload = {
                 productId: currentProductId,
-                sku: formData.sku || `${formData.name.toUpperCase().replace(/\s+/g, '-')}-${Date.now()}`,
+                sku: formData.sku || `${formData.name.toUpperCase().replace(/[\s\W]+/g, '-')}-${Date.now()}`,
                 price: Number(formData.price),
                 stock: Number(formData.stock),
             };
@@ -96,6 +101,7 @@ export default function ProductForm({ initialData, productId }: ProductFormProps
             } else {
                 const { data: newVariant } = await api.post('/products/variants', variantPayload);
                 currentVariantId = newVariant.id;
+                setSavedVariantId(currentVariantId);
             }
 
             // Yana kichik tanaffus rasmlarga o'tishdan oldin
