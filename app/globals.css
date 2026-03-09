@@ -1,4 +1,18 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  @keyframes shine {
+    from {
+      left: -100%;
+    }
+
+    to {
+      left: 200%;
+    }
+  }
+}
 
 :root {
   --background: #ffffff;
@@ -30,6 +44,7 @@ body {
     transform: translateX(100%);
     opacity: 0;
   }
+
   to {
     transform: translateX(0);
     opacity: 1;

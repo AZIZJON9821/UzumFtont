@@ -36,7 +36,7 @@ export default function RootLayout({
               <CartProvider>
                 <WishlistProvider>
                   <ToastContainer />
-                  <div className="flex min-h-screen flex-col bg-white dark:bg-slate-950 transition-colors">
+                  <div className="flex min-h-screen flex-col bg-white dark:bg-slate-950 transition-colors duration-300">
                     <Header />
                     <main className="flex-1 pb-20 md:pb-0 px-4 md:px-0">
                       {children}
