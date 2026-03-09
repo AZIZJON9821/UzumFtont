@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useEffect } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import {
@@ -11,6 +11,8 @@ import {
   Users,
   MapPin,
   ArrowLeft,
+  Menu,
+  X,
 } from 'lucide-react';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { LoadingSpinner, LoadingPage } from '@/components/ui/Loading';
@@ -23,6 +25,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const { user, loading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     if (
@@ -60,7 +63,14 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           <div className="h-6 w-px bg-slate-200" />
           <h1 className="text-lg font-bold text-slate-800">Admin Panel</h1>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsMobileMenuOpen(true)}
+            className="lg:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-md"
+          >
+            <Menu className="h-6 w-6" />
+          </button>
           <div className="h-8 w-8 bg-[#7000ff] rounded-full flex items-center justify-center text-white text-xs font-bold">
             AD
           </div>
@@ -168,7 +178,54 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 overflow-y-auto p-6">{children}</main>
+        <main className="flex-1 overflow-y-auto p-4 md:p-6">{children}</main>
+      </div>
+
+      {/* Mobile Sidebar Overlay */}
+      {isMobileMenuOpen && (
+        <div
+          className="fixed inset-0 z-[60] bg-black/50 lg:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Mobile Sidebar (Drawer) */}
+      <div
+        className={`fixed inset-y-0 left-0 z-[70] w-72 bg-white shadow-2xl transition-transform duration-300 ease-in-out lg:hidden ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
+      >
+        <div className="h-16 border-b flex items-center justify-between px-6">
+          <span className="font-bold text-[#7000ff]">Admin Menyu</span>
+          <button
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="p-2 text-slate-600 hover:bg-slate-100 rounded-md"
+          >
+            <X className="h-6 w-6" />
+          </button>
+        </div>
+        <nav className="p-4 space-y-1">
+          {[
+            { label: 'Boshqaruv paneli', icon: LayoutDashboard, href: '/admin' },
+            { label: 'Mahsulotlar', icon: Package, href: '/admin/products' },
+            { label: 'Buyurtmalar', icon: ShoppingCart, href: '/admin/orders' },
+            { label: 'Foydalanuvchilar', icon: Users, href: '/admin/users' },
+            { label: 'Olib ketish nuqtalari', icon: MapPin, href: '/admin/pickup-points' },
+            { label: 'Sozlamalar', icon: Settings, href: '/admin/settings' },
+          ].map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={`flex items-center gap-3 px-3 py-3 text-sm font-medium rounded-md transition-colors ${pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href))
+                ? 'bg-[#7000ff] text-white'
+                : 'text-black hover:bg-slate-100'
+                }`}
+            >
+              <item.icon className="h-5 w-5" />
+              {item.label}
+            </Link>
+          ))}
+        </nav>
       </div>
     </div>
   );
