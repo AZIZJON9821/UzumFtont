@@ -9,6 +9,7 @@ import type { Product, ProductVariant } from '@/lib/types';
 import { useWishlist } from '@/lib/contexts/WishlistContext';
 import { useCart } from '@/lib/contexts/CartContext';
 import { useAuth } from '@/components/providers/AuthProvider';
+import { FavoriteButton } from '../ui/FavoriteButton';
 import { showToast } from '../ui/Toast';
 
 interface ProductCardProps {
@@ -18,7 +19,6 @@ interface ProductCardProps {
 export function ProductCard({ product }: ProductCardProps) {
     const router = useRouter();
     const { user } = useAuth();
-    const { isInWishlist, toggleWishlist } = useWishlist();
     const { addToCart } = useCart();
 
     // Eng arzon variantni topish
@@ -34,26 +34,6 @@ export function ProductCard({ product }: ProductCardProps) {
 
     // Asosiy rasmni topish
     const mainImage = cheapestVariant?.images?.find(img => img.isMain) || cheapestVariant?.images?.[0];
-
-    const handleWishlistClick = async (e: React.MouseEvent) => {
-        e.preventDefault();
-
-        if (!user) {
-            showToast('Iltimos, avval tizimga kiring', 'error');
-            router.push('/auth/login');
-            return;
-        }
-
-        try {
-            const isAdded = await toggleWishlist(product.id);
-            showToast(
-                isAdded ? 'Sevimlilarga qo\'shildi' : 'Sevimlilardan o\'chirildi',
-                'success'
-            );
-        } catch (error) {
-            showToast('Xatolik yuz berdi', 'error');
-        }
-    };
 
     const handleAddToCart = async (e: React.MouseEvent) => {
         e.preventDefault();
@@ -103,15 +83,10 @@ export function ProductCard({ product }: ProductCardProps) {
                     )}
 
                     {/* Wishlist tugmasi */}
-                    <button
-                        onClick={handleWishlistClick}
-                        className="absolute top-2 right-2 bg-white/90 hover:bg-white p-2 rounded-full shadow-md transition-all duration-200 hover:scale-110"
-                    >
-                        <Heart
-                            className={`h-5 w-5 ${isInWishlist(product.id) ? 'fill-red-500 text-red-500' : 'text-black'
-                                }`}
-                        />
-                    </button>
+                    <FavoriteButton
+                        productId={product.id}
+                        className="absolute top-2 right-2"
+                    />
                 </div>
 
                 {/* Ma'lumotlar */}

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { wishlistApi } from '@/lib/api/wishlist';
+import { useWishlistQuery, useWishlistMutation } from '@/lib/hooks/useWishlist';
 import type { Wishlist, Product } from '@/lib/types';
 import { useAuth } from '@/components/providers/AuthProvider';
 
@@ -19,8 +19,9 @@ const WishlistContext = createContext<WishlistContextType | undefined>(undefined
 
 export function WishlistProvider({ children }: { children: ReactNode }) {
     const { user } = useAuth();
-    const [wishlist, setWishlist] = useState<Wishlist | null>(null);
-    const [loading, setLoading] = useState(false);
+    const { data: wishlist, isLoading: loading, error: queryError } = useWishlistQuery(!!user);
+    const mutation = useWishlistMutation();
+
     const [error, setError] = useState<string | null>(null);
 
     // Wishlist ma'lumotlari
@@ -31,24 +32,9 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
         return wishlist?.products?.some((p: Product) => p.id === productId) || false;
     };
 
-    // Wishlist'ni yuklash
+    // Wishlist'ni yangilash (Query client invalidation orqali)
     const refreshWishlist = async () => {
-        if (!user) {
-            setWishlist(null);
-            return;
-        }
-
-        try {
-            setLoading(true);
-            setError(null);
-            const data = await wishlistApi.get();
-            setWishlist(data);
-        } catch (err: any) {
-            setError(err.response?.data?.message || 'Sevimlilarni yuklashda xatolik');
-            console.error('Wishlist load error:', err);
-        } finally {
-            setLoading(false);
-        }
+        // React Query'da bu avtomatik, lekin API muvofiqligi uchun qoldiramiz
     };
 
     // Toggle (qo'shish yoki o'chirish)
@@ -59,30 +45,20 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
         }
 
         try {
-            setLoading(true);
-            setError(null);
-            const updatedWishlist = await wishlistApi.toggle(productId);
-            setWishlist(updatedWishlist);
-            return updatedWishlist.products.some((p: Product) => p.id === productId);
+            await mutation.mutateAsync(productId);
+            // Bizga boolean qaytarish kerak, optimistic holatni tekshiramiz
+            return !isInWishlist(productId);
         } catch (err: any) {
-            setError(err.response?.data?.message || 'Amalni bajarishda xatolik');
             throw err;
-        } finally {
-            setLoading(false);
         }
     };
-
-    // User o'zgarganda wishlist'ni yuklash
-    useEffect(() => {
-        refreshWishlist();
-    }, [user]);
 
     return (
         <WishlistContext.Provider
             value={{
-                wishlist,
-                loading,
-                error,
+                wishlist: wishlist || null,
+                loading: loading || mutation.isPending,
+                error: (queryError as any)?.message || error,
                 itemCount,
                 isInWishlist,
                 toggleWishlist,
