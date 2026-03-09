@@ -80,6 +80,9 @@ export default function ProductForm({ initialData, productId }: ProductFormProps
                 currentProductId = newProduct.id;
             }
 
+            // Kichik tanaffus (Render serveri ulanishni yopib qo'ymasligi uchun)
+            await new Promise((resolve) => setTimeout(resolve, 500));
+
             // 2. Create or Update Variant
             const variantPayload = {
                 productId: currentProductId,
@@ -95,9 +98,10 @@ export default function ProductForm({ initialData, productId }: ProductFormProps
                 currentVariantId = newVariant.id;
             }
 
+            // Yana kichik tanaffus rasmlarga o'tishdan oldin
+            await new Promise((resolve) => setTimeout(resolve, 500));
+
             // 3. Handle Images
-            // Simplified: Delete all existing images for this variant and re-create
-            // In a real app, you'd want to be more efficient
             if (initialData?.variants?.[0]?.images) {
                 for (const img of initialData.variants[0].images) {
                     await api.delete(`/images/${img.id}`);
