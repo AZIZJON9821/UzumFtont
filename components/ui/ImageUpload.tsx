@@ -97,7 +97,7 @@ export function ImageUpload({ images, onChange, maxImages = 5 }: ImageUploadProp
                 ref={fileInputRef}
                 onChange={handleUpload}
                 className="hidden"
-                accept="image/*"
+                accept="image/jpeg, image/png, image/webp, image/jpg"
                 multiple
             />
             <p className="text-xs text-slate-700">
