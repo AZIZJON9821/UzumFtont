@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import api from "@/lib/api";
+import api from "@/lib/api/axios";
 import { useRouter } from "next/navigation";
 
 interface User {
@@ -43,12 +43,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             const { data } = await api.get("/auth/profile");
             setUser(data);
         } catch (error: any) {
-            if (error.response?.status !== 401) {
+            if (error.response?.status === 401) {
+                localStorage.removeItem("accessToken");
+                localStorage.removeItem("refreshToken");
+                localStorage.removeItem("user");
+                setUser(null);
+            } else {
                 console.error("Auth check failed", error);
             }
             setUser(null);
-            // Optional: clear tokens if invalid
-            // localStorage.removeItem("accessToken");
         } finally {
             setLoading(false);
         }

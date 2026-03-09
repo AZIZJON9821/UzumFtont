@@ -3,7 +3,7 @@
 import { useAuth } from '@/components/providers/AuthProvider';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import api from '@/lib/api';
+import api from '@/lib/api/axios';
 import { ordersApi } from '@/lib/api/orders';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
