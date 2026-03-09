@@ -72,62 +72,41 @@ export function CategorySlider() {
                 className="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-2"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
-                {categories.map((category, index) => {
-                    const gradients = [
-                        'from-blue-500/10 to-blue-600/5',
-                        'from-purple-500/10 to-purple-600/5',
-                        'from-orange-500/10 to-orange-600/5',
-                        'from-green-500/10 to-green-600/5',
-                        'from-pink-500/10 to-pink-600/5',
-                        'from-cyan-500/10 to-cyan-600/5'
-                    ];
-                    const gradient = gradients[index % gradients.length];
-
-                    return (
-                        <Link
-                            key={category.id}
-                            href={`/catalog?category=${category.id}`}
-                            className="flex-shrink-0 group/item w-24 md:w-28"
-                        >
-                            <div className="flex flex-col items-center gap-3">
-                                {/* Premium Circular Container */}
-                                <div className={`relative w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br ${gradient} dark:from-slate-800 dark:to-slate-900 flex items-center justify-center transition-all duration-500 group-hover/item:scale-110 group-hover/item:shadow-[0_0_20px_rgba(112,0,255,0.2)] border border-[#7000ff]/5 dark:border-white/5 overflow-hidden shadow-sm`}>
-
-                                    {/* Glassmorphism Background layer */}
-                                    <div className="absolute inset-0 bg-white/40 dark:bg-black/20 backdrop-blur-[2px] opacity-0 group-hover/item:opacity-100 transition-opacity" />
-
-                                    {category.icon ? (
-                                        category.icon.startsWith('http') ? (
-                                            <div className="relative w-full h-full z-10 transition-transform duration-500 group-hover/item:scale-110">
-                                                <img
-                                                    src={category.icon}
-                                                    alt={category.name}
-                                                    className="w-full h-full object-cover"
-                                                />
-                                            </div>
-                                        ) : (
-                                            <span className="text-3xl md:text-4xl drop-shadow-md z-10 transition-transform duration-500 group-hover/item:scale-110">
-                                                {category.icon}
-                                            </span>
-                                        )
+                {categories.map((category) => (
+                    <Link
+                        key={category.id}
+                        href={`/catalog?category=${category.id}`}
+                        className="flex-shrink-0 group/item"
+                    >
+                        <div className="flex flex-col items-center gap-2 w-24">
+                            {/* Icon */}
+                            <div className="w-20 h-20 bg-gradient-to-br from-[#7000ff]/10 to-[#7000ff]/20 rounded-full flex items-center justify-center group-hover/item:from-[#7000ff]/20 group-hover/item:to-[#7000ff]/30 transition-all duration-200 group-hover/item:scale-110 overflow-hidden relative">
+                                {category.icon ? (
+                                    category.icon.startsWith('http') ? (
+                                        <div className="relative w-full h-full">
+                                            <img
+                                                src={category.icon}
+                                                alt={category.name}
+                                                className="w-full h-full object-cover"
+                                            />
+                                        </div>
                                     ) : (
-                                        <span className="text-2xl md:text-3xl font-black text-[#7000ff] opacity-80 z-10">
-                                            {category.name[0]}
-                                        </span>
-                                    )}
-
-                                    {/* Shine reflection effect */}
-                                    <div className="absolute -inset-full top-0 block w-1/2 h-full -skew-x-12 bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover/item:animate-[shine_1s_ease-in-out]" />
-                                </div>
-
-                                {/* Premium Name Label */}
-                                <span className="text-[11px] md:text-xs text-center text-slate-800 dark:text-slate-200 font-bold line-clamp-2 px-1 group-hover/item:text-[#7000ff] transition-colors leading-tight min-h-[2.5em] flex items-center justify-center">
-                                    {category.name}
-                                </span>
+                                        <span className="text-3xl">{category.icon}</span>
+                                    )
+                                ) : (
+                                    <span className="text-2xl font-bold text-[#7000ff]">
+                                        {category.name[0]}
+                                    </span>
+                                )}
                             </div>
-                        </Link>
-                    );
-                })}
+
+                            {/* Name */}
+                            <span className="text-xs text-center text-slate-700 font-medium line-clamp-2 group-hover/item:text-[#7000ff] transition-colors">
+                                {category.name}
+                            </span>
+                        </div>
+                    </Link>
+                ))}
             </div>
         </div>
     );

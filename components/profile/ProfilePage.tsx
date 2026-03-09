@@ -3,11 +3,12 @@
 import { useAuth } from '@/components/providers/AuthProvider';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import api from '@/lib/api/axios';
+import api from '@/lib/api';
 import { ordersApi } from '@/lib/api/orders';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { MapPin, Package, CreditCard, User, ShieldCheck, LogOut } from 'lucide-react';
+import { MapPin, Package, CreditCard } from 'lucide-react';
+import { showToast } from '@/components/ui/Toast';
 import type { Order } from '@/lib/types';
 
 export default function ProfilePageComponent() {
@@ -85,171 +86,341 @@ export default function ProfilePageComponent() {
     }
   };
 
+  const handleLogout = () => {
+    logout();
+  };
+
   if (loading && !user)
     return <div className="p-8 text-center">Yuklanmoqda...</div>;
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-8">
-      <div className="container mx-auto px-4 max-w-5xl">
-        <div className="flex flex-col md:flex-row gap-8">
-
-          {/* Sidebar */}
-          <div className="w-full md:w-1/3">
-            <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm">
-              <div className="flex items-center gap-4 mb-8">
-                <div className="h-16 w-16 bg-[#7000ff] rounded-full flex items-center justify-center text-white font-bold text-2xl">
-                  {user?.fullName?.[0] || user?.phone?.[0] || '?'}
-                </div>
-                <div>
-                  <h2 className="text-lg font-bold text-slate-900 dark:text-white">
-                    {user?.fullName || "Foydalanuvchi"}
-                  </h2>
-                  <p className="text-slate-500 text-sm">{user?.phone}</p>
-                </div>
+    <div className="container mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto flex flex-col md:flex-row gap-6">
+        {/* Sidebar Navigation */}
+        <div className="w-full md:w-1/4">
+          <div className="bg-white shadow rounded-lg p-6 mb-6">
+            <div className="flex flex-col items-center mb-6">
+              <div className="h-20 w-20 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-3xl mb-3">
+                {user?.fullName?.[0] || user?.phone?.[0] || '?'}
               </div>
-
-              <nav className="space-y-1">
-                {[
-                  { id: 'info', label: "Ma'lumotlar", icon: User },
-                  { id: 'orders', label: "Buyurtmalar", icon: Package },
-                  { id: 'addresses', label: "Manzillar", icon: MapPin },
-                ].map((item) => (
-                  <button
-                    key={item.id}
-                    onClick={() => setActiveTab(item.id)}
-                    className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${activeTab === item.id
-                      ? 'bg-[#7000ff] text-white'
-                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
-                      }`}
-                  >
-                    <item.icon className="h-4 w-4" />
-                    {item.label}
-                  </button>
-                ))}
-
-                {user && ['ADMIN', 'SUPER_ADMIN', 'MODERATOR'].includes(user.role?.toUpperCase()) && (
-                  <button
-                    onClick={() => router.push('/admin')}
-                    className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-[#7000ff] hover:bg-[#7000ff]/5 transition-colors mt-4 border border-[#7000ff]/20"
-                  >
-                    <ShieldCheck className="h-4 w-4" />
-                    Admin Panel
-                  </button>
-                )}
-
-                <button
-                  onClick={logout}
-                  className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors mt-4"
-                >
-                  <LogOut className="h-4 w-4" />
-                  Chiqish
-                </button>
-              </nav>
+              <h2 className="text-xl font-bold text-black text-center">
+                {user?.fullName || "Ism yo'q"}
+              </h2>
+              <p className="text-slate-900 text-sm">{user?.phone}</p>
             </div>
+
+            <nav className="flex flex-col gap-2">
+              <button
+                onClick={() => setActiveTab('info')}
+                className={`w-full text-left px-4 py-2 rounded-md font-medium transition-colors ${activeTab === 'info'
+                  ? 'bg-[#7000ff] text-white'
+                  : 'hover:bg-gray-100 text-black'
+                  }`}
+              >
+                Ma'lumotlarim
+              </button>
+              <button
+                onClick={() => setActiveTab('orders')}
+                className={`w-full text-left px-4 py-2 rounded-md font-medium transition-colors ${activeTab === 'orders'
+                  ? 'bg-[#7000ff] text-white'
+                  : 'hover:bg-gray-100 text-black'
+                  }`}
+              >
+                Buyurtmalarim
+              </button>
+              <button
+                onClick={() => setActiveTab('addresses')}
+                className={`w-full text-left px-4 py-2 rounded-md font-medium transition-colors ${activeTab === 'addresses'
+                  ? 'bg-[#7000ff] text-white'
+                  : 'hover:bg-gray-100 text-black'
+                  }`}
+              >
+                Manzillarim
+              </button>
+              <button
+                onClick={handleLogout}
+                className="w-full text-left px-4 py-2 rounded-md font-medium text-red-600 hover:bg-red-50 mt-4"
+              >
+                Chiqish
+              </button>
+            </nav>
           </div>
+        </div>
 
-          {/* Main Content */}
-          <div className="w-full md:w-2/3">
-            <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 p-8 shadow-sm min-h-[400px]">
-              {error && (
-                <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-lg text-sm font-medium border border-red-100">
-                  {error}
-                </div>
-              )}
+        {/* Main Content Area */}
+        <div className="w-full md:w-3/4">
+          <div className="bg-white shadow rounded-lg p-6 min-h-[400px]">
+            {error && <div className="mb-4 text-red-500">{error}</div>}
 
-              {activeTab === 'info' && (
-                <div>
-                  <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-xl font-bold text-slate-900 dark:text-white">Shaxsiy ma'lumotlar</h3>
-                    {!editing && (
-                      <Button variant="outline" size="sm" onClick={() => setEditing(true)}>
-                        Tahrirlash
-                      </Button>
-                    )}
-                  </div>
-
-                  {editing ? (
-                    <form onSubmit={handleUpdate} className="space-y-4">
-                      <div className="grid grid-cols-1 gap-4">
-                        <div className="space-y-1">
-                          <label className="text-sm font-medium text-slate-700 dark:text-slate-300">To'liq ism</label>
-                          <Input value={formData.fullName} onChange={(e) => setFormData({ ...formData, fullName: e.target.value })} />
-                        </div>
-                        <div className="space-y-1">
-                          <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Email</label>
-                          <Input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
-                        </div>
-                      </div>
-                      <div className="flex gap-3 pt-4">
-                        <Button type="submit" disabled={loading}>Saqlash</Button>
-                        <Button type="button" variant="ghost" onClick={() => setEditing(false)}>Bekor qilish</Button>
-                      </div>
-                    </form>
-                  ) : (
-                    <div className="space-y-6">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                        <div>
-                          <p className="text-sm text-slate-500 mb-1">Telefon raqam</p>
-                          <p className="font-medium">{user?.phone}</p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-slate-500 mb-1">Email</p>
-                          <p className="font-medium">{user?.email || 'Kiritilmagan'}</p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-slate-500 mb-1">To'liq ism</p>
-                          <p className="font-medium">{user?.fullName || 'Kiritilmagan'}</p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-slate-500 mb-1">Profil holati</p>
-                          <p className={`font-medium ${user?.isActive ? 'text-green-600' : 'text-red-600'}`}>
-                            {user?.isActive ? 'Faol' : 'Faol emas'}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
+            {/* INFO TAB */}
+            {activeTab === 'info' && (
+              <div>
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-xl font-bold text-black">
+                    Shaxsiy ma'lumotlar
+                  </h3>
+                  {!editing && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setEditing(true)}
+                    >
+                      Tahrirlash
+                    </Button>
                   )}
                 </div>
-              )}
 
-              {activeTab === 'orders' && (
-                <div>
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6">Buyurtmalar tarixi</h3>
-                  {ordersLoading ? (
-                    <div className="text-center py-12">Yuklanmoqda...</div>
-                  ) : orders.length > 0 ? (
-                    <div className="space-y-4">
-                      {orders.map((order) => (
-                        <div key={order.id} className="border border-slate-100 dark:border-slate-800 rounded-lg p-4 flex justify-between items-center">
+                {editing ? (
+                  <form onSubmit={handleUpdate} className="space-y-4 max-w-md">
+                    <div>
+                      <label className="block text-sm font-medium text-black mb-1">
+                        Ism Familiya
+                      </label>
+                      <Input
+                        value={formData.fullName}
+                        onChange={(e) =>
+                          setFormData({ ...formData, fullName: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-black mb-1">
+                        Email
+                      </label>
+                      <Input
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) =>
+                          setFormData({ ...formData, email: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div className="flex gap-2 pt-2">
+                      <Button type="submit" disabled={loading}>
+                        Saqlash
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={() => setEditing(false)}
+                      >
+                        Bekor qilish
+                      </Button>
+                    </div>
+                  </form>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="p-4 bg-gray-50 rounded-lg">
+                      <label className="block text-xs text-slate-900 uppercase font-semibold mb-1">
+                        Telefon
+                      </label>
+                      <p className="font-bold text-black text-lg">
+                        {user?.phone}
+                      </p>
+                    </div>
+                    <div className="p-4 bg-gray-50 rounded-lg">
+                      <label className="block text-xs text-slate-900 uppercase font-semibold mb-1">
+                        Email
+                      </label>
+                      <p className="font-bold text-black text-lg">
+                        {user?.email || 'Kiritilmagan'}
+                      </p>
+                    </div>
+                    <div className="p-4 bg-gray-50 rounded-lg">
+                      <label className="block text-xs text-slate-900 uppercase font-semibold mb-1">
+                        Ism
+                      </label>
+                      <p className="font-bold text-black text-lg">
+                        {user?.fullName || 'Kiritilmagan'}
+                      </p>
+                    </div>
+                    <div className="p-4 bg-gray-50 rounded-lg">
+                      <label className="block text-xs text-slate-500 uppercase font-semibold mb-1">
+                        Holati
+                      </label>
+                      <span
+                        className={`inline-flex px-2 py-0.5 rounded text-xs font-bold ${user?.isActive
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-red-100 text-red-800'
+                          }`}
+                      >
+                        {user?.isActive ? 'Faol' : 'Faol emas'}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* ORDERS TAB */}
+            {activeTab === 'orders' && (
+              <div>
+                <h3 className="text-xl font-bold text-black mb-6">
+                  Buyurtmalar tarixi
+                </h3>
+
+                {ordersLoading ? (
+                  <div className="text-center py-12 bg-gray-50 rounded-lg">
+                    <div className="text-4xl mb-4">⏳</div>
+                    <p className="text-black font-medium">Yuklanmoqda...</p>
+                  </div>
+                ) : orders.length > 0 ? (
+                  <div className="space-y-6">
+                    {orders.map((order) => (
+                      <div
+                        key={order.id}
+                        className="border border-slate-200 rounded-lg p-6"
+                      >
+                        <div className="flex justify-between items-start mb-4">
                           <div>
-                            <p className="font-bold text-sm">#{order.id.substring(0, 8)}</p>
-                            <p className="text-xs text-slate-500">{new Date(order.createdAt).toLocaleDateString()}</p>
+                            <h4 className="font-bold text-lg text-black">
+                              #{order.id.substring(0, 8)}
+                            </h4>
+                            <p className="text-slate-600 text-sm">
+                              {new Date(order.createdAt).toLocaleDateString(
+                                'uz-UZ'
+                              )}
+                            </p>
                           </div>
                           <div className="text-right">
-                            <p className="font-bold text-[#7000ff]">{order.totalAmount.toLocaleString()} so'm</p>
-                            <span className="text-[10px] px-2 py-0.5 bg-slate-100 rounded-full font-bold uppercase">{order.status}</span>
+                            <p className="font-semibold text-black">
+                              {order.totalAmount.toLocaleString('uz-UZ')} so'm
+                            </p>
+                            <span
+                              className={`inline-block px-2 py-1 rounded text-xs font-medium ${order.status === 'DELIVERED'
+                                ? 'bg-green-100 text-green-800'
+                                : order.status === 'SHIPPED'
+                                  ? 'bg-blue-100 text-blue-800'
+                                  : order.status === 'PROCESSING'
+                                    ? 'bg-yellow-100 text-yellow-800'
+                                    : order.status === 'CANCELLED'
+                                      ? 'bg-red-100 text-red-800'
+                                      : 'bg-gray-100 text-gray-800'
+                                }`}
+                            >
+                              {order.status === 'DELIVERED'
+                                ? 'Yetkazildi'
+                                : order.status === 'SHIPPED'
+                                  ? 'Yetkazish jarayonida'
+                                  : order.status === 'PROCESSING'
+                                    ? 'Qayta ishlanmoqda'
+                                    : order.status === 'CANCELLED'
+                                      ? 'Bekor qilindi'
+                                      : order.status}
+                            </span>
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-12 text-slate-500 italic">Buyurtmalar topilmadi</div>
-                  )}
-                </div>
-              )}
 
-              {activeTab === 'addresses' && (
-                <div>
-                  <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-6">Mening manzillarim</h3>
-                  <div className="border border-dashed border-slate-300 dark:border-slate-700 rounded-xl p-8 text-center text-slate-400">
-                    <MapPin className="h-8 w-8 mx-auto mb-2 opacity-20" />
-                    <p className="text-sm">Hali manzillar qo'shilmagan</p>
+                        <div className="mb-4">
+                          <h5 className="font-medium text-slate-700 mb-2">
+                            Mahsulotlar:
+                          </h5>
+                          <div className="space-y-2">
+                            {order.items.map((item, idx) => (
+                              <div
+                                key={idx}
+                                className="flex justify-between text-sm"
+                              >
+                                <span className="text-black">
+                                  {item.variant?.product?.name ||
+                                    "Noma'lum mahsulot"}{' '}
+                                  × {item.quantity}
+                                </span>
+                                <span className='text-black'>
+                                  {(
+                                    (item.price || 0) * item.quantity
+                                  ).toLocaleString('uz-UZ')}{' '}
+                                  so'm
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="flex flex-wrap gap-4 text-sm text-slate-600">
+                          <div className="flex items-center gap-1">
+                            <CreditCard className="h-4 w-4" />
+                            <span>
+                              To'lov:{' '}
+                              {order.paymentMethod === 'CASH'
+                                ? 'Naqd pul'
+                                : order.paymentMethod === 'CARD'
+                                  ? 'Karta'
+                                  : order.paymentMethod}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Package className="h-4 w-4" />
+                            <span>
+                              To'lov holati:{' '}
+                              {order.paymentStatus === 'PAID'
+                                ? "To'landi"
+                                : order.paymentStatus === 'PENDING'
+                                  ? 'Kutilmoqda'
+                                  : order.paymentStatus}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12 bg-gray-50 rounded-lg">
+                    <div className="text-4xl mb-4">📦</div>
+                    <p className="text-black font-medium">
+                      Sizda hozircha buyurtmalar yo'q
+                    </p>
+                    <Button className="mt-4" onClick={() => router.push('/')}>
+                      Xaridni boshlash
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* ADDRESSES TAB */}
+            {activeTab === 'addresses' && (
+              <div>
+                <h3 className="text-xl font-bold text-black mb-6">
+                  Manzillarim
+                </h3>
+
+                {/* Static address */}
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+                  <div className="flex items-start gap-4">
+                    <div className="p-3 bg-blue-100 rounded-full">
+                      <MapPin className="h-6 w-6 text-blue-600" />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-black mb-1">
+                        Tashkent, Yunusobod tumani
+                      </h4>
+                      <p className="text-black text-sm mb-2">
+                        Amir Temur ko'chasi, 123-uy
+                      </p>
+                      <div className="h-48 bg-gray-200 rounded-lg relative overflow-hidden">
+                        <iframe
+                          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3038.775342649475!2d69.2401!3d41.2995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDHCsDE3JzM4LjIiTiA2OcKwMTQnMjQuNCJF!5e0!3m2!1sen!2s!4v1234567890123!5m2!1sen!2s"
+                          width="100%"
+                          height="100%"
+                          style={{ border: 0 }}
+                          allowFullScreen={false}
+                          loading="lazy"
+                          referrerPolicy="no-referrer-when-downgrade"
+                          title="Location Map"
+                        ></iframe>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              )}
-            </div>
-          </div>
 
+                <p className="text-sm text-gray-600">
+                  Bu sizning birlamchi yetkazib berish manzilingiz. Ushbu manzil
+                  buyurtmalaringizda standart sifatida foydalaniladi.
+                </p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

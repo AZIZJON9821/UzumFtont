@@ -3,13 +3,12 @@
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Search, ShoppingBag, Heart, User, Menu, ShieldCheck, X, ChevronRight, LayoutDashboard } from 'lucide-react';
+import { Search, ShoppingBag, Heart, User, Menu, ShieldCheck, X, ChevronRight } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { useAuth } from '../providers/AuthProvider';
 import { useCart } from '@/lib/contexts/CartContext';
 import { useWishlist } from '@/lib/contexts/WishlistContext';
 import { productsApi } from '@/lib/api/products';
-import { ThemeToggle } from '../ui/ThemeToggle';
 
 export function Header() {
     const { user } = useAuth();
@@ -95,19 +94,12 @@ export function Header() {
                         <span className="cursor-pointer hover:text-black transition-colors">Topshirish punktlari</span>
                     </div>
                     <div className="flex gap-5 items-center">
-                        <span className="text-slate-400 dark:text-slate-500">Buyurtmangizni 1 kunda yetkazib beramiz</span>
-                        <div className="h-3 w-[1px] bg-slate-300 dark:bg-slate-700"></div>
-
-
-                        <span className="cursor-pointer hover:text-black dark:hover:text-white transition-colors">Savol-javoblar</span>
-                        <span className="cursor-pointer hover:text-black dark:hover:text-white transition-colors">Buyurtmalarim</span>
-
-                        <div className="flex items-center gap-3">
-                            <ThemeToggle />
-                            <div className="h-3 w-[1px] bg-slate-300 dark:bg-slate-700"></div>
-                            <div className="flex items-center gap-1 cursor-pointer font-bold text-black dark:text-white hover:opacity-80 transition-opacity">
-                                <span>O'zbekcha</span>
-                            </div>
+                        <span className="text-slate-400">Buyurtmangizni 1 kunda yetkazib beramiz</span>
+                        <div className="h-3 w-[1px] bg-slate-300"></div>
+                        <span className="cursor-pointer hover:text-black transition-colors">Savol-javoblar</span>
+                        <span className="cursor-pointer hover:text-black transition-colors">Buyurtmalarim</span>
+                        <div className="flex items-center gap-1 cursor-pointer font-bold text-black hover:opacity-80 transition-opacity">
+                            <span>O'zbekcha</span>
                         </div>
                     </div>
                 </div>
@@ -132,26 +124,26 @@ export function Header() {
 
                         {/* Search Bar with Suggestions */}
                         <div className="flex-1 max-w-2xl relative" ref={searchRef}>
-                            <form onSubmit={handleSearch} className="relative flex h-10 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden focus-within:border-[#7000ff] focus-within:ring-4 focus-within:ring-[#7000ff]/10 transition-all bg-[#f2f4f7] dark:bg-slate-800">
+                            <form onSubmit={handleSearch} className="relative flex h-10 border border-slate-200 rounded-md overflow-hidden focus-within:border-[#7000ff] transition-all bg-[#f2f4f7]">
                                 <input
                                     type="text"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     onFocus={() => searchQuery.length >= 2 && setShowSuggestions(true)}
                                     placeholder="Mahsulot va toifalarni qidirish"
-                                    className="w-full h-full pl-4 pr-10 focus:outline-none text-sm text-black dark:text-white placeholder:text-slate-500 font-medium bg-transparent"
+                                    className="w-full h-full pl-4 pr-10 focus:outline-none text-sm text-black placeholder:text-slate-500 font-medium bg-transparent"
                                 />
                                 {searchQuery && (
                                     <button
                                         type="button"
                                         onClick={() => setSearchQuery('')}
-                                        className="absolute right-12 top-2.5 text-slate-400 hover:text-black dark:hover:text-white transition-colors"
+                                        className="absolute right-12 top-2.5 text-slate-400 hover:text-black transition-colors"
                                     >
                                         <X className="h-5 w-5" />
                                     </button>
                                 )}
-                                <button type="submit" className="px-5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-500 border-l border-slate-200 dark:border-slate-700 transition-colors group">
-                                    <Search className="h-5 w-5 group-hover:text-black dark:group-hover:text-white transition-colors" />
+                                <button type="submit" className="px-5 bg-[#f0f2f5] hover:bg-[#e2e5e9] text-slate-500 border-l border-slate-200 transition-colors group">
+                                    <Search className="h-5 w-5 group-hover:text-black transition-colors" />
                                 </button>
                             </form>
 
@@ -196,13 +188,25 @@ export function Header() {
                         </div>
                     </div>
 
-                    {/* User Actions (Visible in header on desktop, mobile hidden via responsive classes if needed) */}
+                    {/* User Actions */}
                     <div className="hidden md:flex items-center gap-6 shrink-0">
-                        {/* Admin Icon (Repositioned and changed to Shield) */}
+                        {/* Admin Link with Shield Icon */}
                         {user && ['ADMIN', 'SUPER_ADMIN', 'MODERATOR'].includes(user.role?.toUpperCase()) && (
                             <Link href="/admin" className="flex items-center gap-2 text-slate-500 hover:text-[#7000ff] group">
                                 <ShieldCheck className="h-6 w-6" />
                                 <span className="text-sm font-medium">Admin</span>
+                            </Link>
+                        )}
+
+                        {user ? (
+                            <Link href="/profile" className="flex items-center gap-2 text-black hover:text-[#7000ff] group">
+                                <User className="h-6 w-6" />
+                                <span className="text-sm font-medium truncate max-w-[100px]">{user.fullName || "Kabinet"}</span>
+                            </Link>
+                        ) : (
+                            <Link href="/auth/login" className="flex items-center gap-2 text-black hover:text-[#7000ff] group">
+                                <User className="h-6 w-6" />
+                                <span className="text-sm font-medium">Kirish</span>
                             </Link>
                         )}
 
