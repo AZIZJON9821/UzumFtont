@@ -22,16 +22,9 @@ export const productsApi = {
         return data;
     },
 
-    // Qidiruv
-    search: async (query: string, filters?: ProductFilters) => {
-        const { data } = await api.get<Product[]>('/products', {
-            params: { ...filters, search: query },
-        });
-        return data;
-    },
     // Qidiruv takliflari
     getSuggestions: async (query: string) => {
-        const { data } = await api.get<string[]>('/products/suggestions', {
+        const { data } = await api.get<{ products: string[], categories: any[] }>('/products/suggestions', {
             params: { q: query },
         });
         return data;

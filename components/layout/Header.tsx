@@ -16,7 +16,7 @@ export function Header() {
     const { itemCount: cartCount } = useCart();
     const { itemCount: wishlistCount } = useWishlist();
     const [searchQuery, setSearchQuery] = useState('');
-    const [suggestions, setSuggestions] = useState<string[]>([]);
+    const [suggestions, setSuggestions] = useState<{ products: string[], categories: any[] }>({ products: [], categories: [] });
     const [showSuggestions, setShowSuggestions] = useState(false);
     const searchRef = useRef<HTMLDivElement>(null);
 
@@ -32,7 +32,7 @@ export function Header() {
                     console.error('Suggestions fetch error:', error);
                 }
             } else {
-                setSuggestions([]);
+                setSuggestions({ products: [], categories: [] });
                 setShowSuggestions(false);
             }
         }, 300);
@@ -68,21 +68,37 @@ export function Header() {
         submitSearch(suggestion);
     };
 
+    const handleCategoryClick = (category: any) => {
+        router.push(`/catalog/${category.slug}`);
+        setShowSuggestions(false);
+    };
+
+    // Matnni qalinlashtirish funksiyasi
+    const highlightMatch = (text: string, query: string) => {
+        if (!query) return text;
+        const parts = text.split(new RegExp(`(${query})`, 'gi'));
+        return parts.map((part, i) =>
+            part.toLowerCase() === query.toLowerCase()
+                ? <span key={i} className="font-bold text-black">{part}</span>
+                : <span key={i}>{part}</span>
+        );
+    };
+
     return (
         <header className="sticky top-0 z-50 w-full bg-white flex flex-col">
             {/* Top Bar for Language & Location */}
             <div className="bg-[#f0f2f5] py-1.5 text-xs text-slate-600 hidden md:block">
                 <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
                     <div className="flex gap-4">
-                        <span className="flex items-center gap-1 cursor-pointer hover:text-black">Shahar: <span className="text-black font-semibold border-b border-black">Toshkent</span></span>
-                        <span className="cursor-pointer hover:text-black">Topshirish punktlari</span>
+                        <span className="flex items-center gap-1 cursor-pointer hover:text-black transition-colors">Shahar: <span className="text-black font-semibold border-b border-black">Toshkent</span></span>
+                        <span className="cursor-pointer hover:text-black transition-colors">Topshirish punktlari</span>
                     </div>
                     <div className="flex gap-5 items-center">
-                        <span className="text-[#a0a0a0]">Buyurtmangizni 1 kunda yetkazib beramiz</span>
+                        <span className="text-slate-400">Buyurtmangizni 1 kunda yetkazib beramiz</span>
                         <div className="h-3 w-[1px] bg-slate-300"></div>
-                        <span className="cursor-pointer hover:text-black">Savol-javoblar</span>
-                        <span className="cursor-pointer hover:text-black">Buyurtmalarim</span>
-                        <div className="flex items-center gap-1 cursor-pointer font-bold text-black">
+                        <span className="cursor-pointer hover:text-black transition-colors">Savol-javoblar</span>
+                        <span className="cursor-pointer hover:text-black transition-colors">Buyurtmalarim</span>
+                        <div className="flex items-center gap-1 cursor-pointer font-bold text-black hover:opacity-80 transition-opacity">
                             <span>O'zbekcha</span>
                         </div>
                     </div>
@@ -100,7 +116,7 @@ export function Header() {
                     <div className="flex-1 flex items-center gap-4">
                         {/* Catalog Button (Desktop only) */}
                         <Link href="/catalog" className="hidden lg:block">
-                            <Button className="flex gap-2 bg-[#f0f2f5] text-[#7000ff] hover:bg-[#e2e5e9] border-none font-semibold px-5 h-10">
+                            <Button className="flex gap-2 bg-[#f0f2f5] text-[#7000ff] hover:bg-[#e2e5e9] border-none font-semibold px-5 h-10 transition-colors">
                                 <Menu className="h-5 w-5" />
                                 Katalog
                             </Button>
@@ -108,44 +124,62 @@ export function Header() {
 
                         {/* Search Bar with Suggestions */}
                         <div className="flex-1 max-w-2xl relative" ref={searchRef}>
-                            <form onSubmit={handleSearch} className="relative flex h-10 border border-slate-200 rounded-md overflow-hidden focus-within:border-[#7000ff] transition-all">
+                            <form onSubmit={handleSearch} className="relative flex h-10 border border-slate-200 rounded-md overflow-hidden focus-within:border-[#7000ff] transition-all bg-[#f2f4f7]">
                                 <input
                                     type="text"
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     onFocus={() => searchQuery.length >= 2 && setShowSuggestions(true)}
                                     placeholder="Mahsulot va toifalarni qidirish"
-                                    className="w-full h-full pl-4 pr-10 focus:outline-none text-sm text-black placeholder:text-slate-400 font-medium"
+                                    className="w-full h-full pl-4 pr-10 focus:outline-none text-sm text-black placeholder:text-slate-500 font-medium bg-transparent"
                                 />
                                 {searchQuery && (
                                     <button
                                         type="button"
                                         onClick={() => setSearchQuery('')}
-                                        className="absolute right-12 top-2.5 text-slate-400 hover:text-black"
+                                        className="absolute right-12 top-2.5 text-slate-400 hover:text-black transition-colors"
                                     >
                                         <X className="h-5 w-5" />
                                     </button>
                                 )}
-                                <button type="submit" className="px-5 bg-[#f0f2f5] hover:bg-[#e2e5e9] text-slate-500 border-l border-slate-100 transition-colors">
-                                    <Search className="h-5 w-5" />
+                                <button type="submit" className="px-5 bg-[#f0f2f5] hover:bg-[#e2e5e9] text-slate-500 border-l border-slate-200 transition-colors group">
+                                    <Search className="h-5 w-5 group-hover:text-black transition-colors" />
                                 </button>
                             </form>
 
                             {/* Suggestions Dropdown */}
-                            {showSuggestions && suggestions.length > 0 && (
-                                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                            {showSuggestions && (suggestions.products.length > 0 || suggestions.categories.length > 0) && (
+                                <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-100 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 z-[100]">
                                     <div className="py-2">
-                                        <p className="px-4 py-1.5 text-[10px] uppercase font-bold text-slate-400 tracking-wider">Takliflar</p>
-                                        {suggestions.map((suggestion, index) => (
+                                        {/* Product Suggestions */}
+                                        {suggestions.products.map((product, index) => (
                                             <button
-                                                key={index}
-                                                onClick={() => handleSuggestionClick(suggestion)}
-                                                className="w-full text-left px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-[#f0f2f5] flex items-center gap-3 transition-colors"
+                                                key={`p-${index}`}
+                                                onClick={() => handleSuggestionClick(product)}
+                                                className="w-full text-left px-5 py-3 text-sm font-medium text-slate-600 hover:bg-[#f2f4f7] flex items-center gap-4 transition-colors group"
                                             >
-                                                <Search className="h-4 w-4 text-slate-300" />
-                                                <span dangerouslySetInnerHTML={{
-                                                    __html: suggestion.replace(new RegExp(`(${searchQuery})`, 'gi'), '<span class="text-black font-bold">$1</span>')
-                                                }} />
+                                                <Search className="h-5 w-5 text-slate-400 group-hover:text-slate-600" />
+                                                <span>{highlightMatch(product, searchQuery)}</span>
+                                            </button>
+                                        ))}
+
+                                        {/* Divider */}
+                                        {suggestions.products.length > 0 && suggestions.categories.length > 0 && (
+                                            <div className="mx-5 my-2 border-t border-slate-100" />
+                                        )}
+
+                                        {/* Category Suggestions */}
+                                        {suggestions.categories.map((category, index) => (
+                                            <button
+                                                key={`c-${index}`}
+                                                onClick={() => handleCategoryClick(category)}
+                                                className="w-full text-left px-5 py-3 hover:bg-[#f2f4f7] flex items-center justify-between transition-colors group"
+                                            >
+                                                <div className="flex flex-col">
+                                                    <span className="text-sm font-medium text-black group-hover:text-[#7000ff]">{category.name}</span>
+                                                    <span className="text-xs text-slate-400">{category.parentName}</span>
+                                                </div>
+                                                <ChevronRight className="h-5 w-5 text-slate-300 group-hover:text-slate-600" />
                                             </button>
                                         ))}
                                     </div>
