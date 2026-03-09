@@ -29,4 +29,11 @@ export const productsApi = {
         });
         return data;
     },
+    // Qidiruv takliflari
+    getSuggestions: async (query: string) => {
+        const { data } = await api.get<string[]>('/products/suggestions', {
+            params: { q: query },
+        });
+        return data;
+    },
 };
