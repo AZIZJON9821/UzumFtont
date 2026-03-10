@@ -10,15 +10,7 @@ import { usersApi } from '@/lib/api/users';
 import { Button } from '@/components/ui/Button';
 import { LoadingSpinner } from '@/components/ui/Loading';
 
-interface User {
-  id: string;
-  fullName: string;
-  email: string;
-  phone?: string;
-  role: string;
-  isActive: boolean;
-  createdAt: string;
-}
+import type { User } from '@/lib/types';
 
 const ROLES = ['ALL', 'CUSTOMER', 'SELLER', 'ADMIN', 'MODERATOR', 'SUPER_ADMIN'];
 const ROLE_LABELS: Record<string, string> = {
@@ -245,8 +237,8 @@ export default function AdminUsersPage() {
                 key={r}
                 onClick={() => { setRoleFilter(r); setPage(1); }}
                 className={`px-3 py-1 rounded-full text-xs font-semibold border transition-all ${roleFilter === r
-                    ? 'bg-[#7000ff] text-white border-[#7000ff]'
-                    : 'bg-white text-slate-600 border-slate-200 hover:border-[#7000ff] hover:text-[#7000ff]'
+                  ? 'bg-[#7000ff] text-white border-[#7000ff]'
+                  : 'bg-white text-slate-600 border-slate-200 hover:border-[#7000ff] hover:text-[#7000ff]'
                   }`}
               >
                 {ROLE_LABELS[r]}
@@ -380,8 +372,8 @@ export default function AdminUsersPage() {
                     key={pg}
                     onClick={() => setPage(pg)}
                     className={`w-9 h-9 rounded-lg text-sm font-medium transition-colors ${page === pg
-                        ? 'bg-[#7000ff] text-white'
-                        : 'border hover:bg-slate-50 text-slate-700'
+                      ? 'bg-[#7000ff] text-white'
+                      : 'border hover:bg-slate-50 text-slate-700'
                       }`}
                   >
                     {pg}

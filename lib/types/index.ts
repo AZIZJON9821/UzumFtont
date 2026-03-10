@@ -6,8 +6,12 @@ export interface User {
     email: string;
     fullName: string;
     phone?: string;
-    role: 'USER' | 'ADMIN' | 'MODERATOR';
+    role: 'CUSTOMER' | 'SELLER' | 'ADMIN' | 'MODERATOR' | 'COURIER' | 'SUPER_ADMIN';
+    isActive: boolean;
+    isEmailVerified?: boolean;
+    isPhoneVerified?: boolean;
     createdAt: string;
+    updatedAt?: string;
 }
 
 // ==========================================
