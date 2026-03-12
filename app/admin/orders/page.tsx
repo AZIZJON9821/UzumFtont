@@ -7,6 +7,7 @@ import { ordersApi } from '@/lib/api/orders';
 import { Button } from '@/components/ui/Button';
 import { LoadingSpinner } from '@/components/ui/Loading';
 import type { Order } from '@/lib/types';
+import { useAuth } from '@/components/providers/AuthProvider';
 
 // Extend the Order type to include orderNumber for display purposes
 interface DisplayOrder extends Order {
@@ -14,6 +15,7 @@ interface DisplayOrder extends Order {
 }
 
 export default function AdminOrdersPage() {
+  const { user: authUser, loading: authLoading } = useAuth();
   const [orders, setOrders] = useState<DisplayOrder[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -36,8 +38,10 @@ export default function AdminOrdersPage() {
   };
 
   useEffect(() => {
-    fetchOrders();
-  }, []);
+    if (!authLoading && authUser) {
+      fetchOrders();
+    }
+  }, [authLoading, authUser]);
 
   const handleDelete = async (id: string) => {
     if (confirm("Ushbu buyurtmani o'chirmoqchimisiz?")) {
@@ -144,18 +148,17 @@ export default function AdminOrdersPage() {
                   </td>
                   <td className="px-6 py-4">
                     <span
-                      className={`px-2 py-1 text-[10px] font-bold rounded-full uppercase ${
-                        order.status === 'DELIVERED' ||
-                        order.status === 'CONFIRMED'
+                      className={`px-2 py-1 text-[10px] font-bold rounded-full uppercase ${order.status === 'DELIVERED' ||
+                          order.status === 'CONFIRMED'
                           ? 'bg-green-100 text-green-700'
                           : order.status === 'PENDING' ||
                             order.status === 'PROCESSING' ||
                             order.status === 'SHIPPED'
-                          ? 'bg-yellow-100 text-yellow-700'
-                          : order.status === 'CANCELLED'
-                          ? 'bg-red-100 text-red-700'
-                          : 'bg-slate-100 text-slate-700'
-                      }`}
+                            ? 'bg-yellow-100 text-yellow-700'
+                            : order.status === 'CANCELLED'
+                              ? 'bg-red-100 text-red-700'
+                              : 'bg-slate-100 text-slate-700'
+                        }`}
                     >
                       {order.status}
                     </span>

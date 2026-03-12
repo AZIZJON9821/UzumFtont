@@ -9,6 +9,7 @@ import {
 import { usersApi } from '@/lib/api/users';
 import { Button } from '@/components/ui/Button';
 import { LoadingSpinner } from '@/components/ui/Loading';
+import { useAuth } from '@/components/providers/AuthProvider';
 
 import type { User } from '@/lib/types';
 
@@ -35,6 +36,7 @@ type SortKey = 'fullName' | 'email' | 'role' | 'createdAt';
 type SortDir = 'asc' | 'desc';
 
 export default function AdminUsersPage() {
+  const { user: authUser, loading: authLoading } = useAuth();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -63,7 +65,11 @@ export default function AdminUsersPage() {
     }
   };
 
-  useEffect(() => { fetchUsers(); }, []);
+  useEffect(() => {
+    if (!authLoading && authUser) {
+      fetchUsers();
+    }
+  }, [authLoading, authUser]);
 
   const handleDelete = async (id: string) => {
     if (confirm("Ushbu foydalanuvchini o'chirmoqchimisiz?")) {

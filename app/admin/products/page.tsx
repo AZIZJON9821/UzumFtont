@@ -9,6 +9,7 @@ import {
 import api from '@/lib/api';
 import { Button } from '@/components/ui/Button';
 import { LoadingSpinner } from '@/components/ui/Loading';
+import { useAuth } from '@/components/providers/AuthProvider';
 
 interface Product {
     id: string;
@@ -40,6 +41,7 @@ type SortKey = 'name' | 'minPrice' | 'totalStock' | 'status' | 'createdAt';
 type SortDir = 'asc' | 'desc';
 
 export default function AdminProductsPage() {
+    const { user: authUser, loading: authLoading } = useAuth();
     const [products, setProducts] = useState<Product[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [loading, setLoading] = useState(true);
@@ -74,7 +76,11 @@ export default function AdminProductsPage() {
         }
     };
 
-    useEffect(() => { fetchAll(); }, []);
+    useEffect(() => {
+        if (!authLoading && authUser) {
+            fetchAll();
+        }
+    }, [authLoading, authUser]);
 
     const handleDelete = async (id: string) => {
         if (confirm("Ushbu mahsulotni o'chirmoqchimisiz?")) {
@@ -259,8 +265,8 @@ export default function AdminProductsPage() {
                                 key={s}
                                 onClick={() => { setStatusFilter(s); setPage(1); }}
                                 className={`px-3 py-1 rounded-full text-xs font-semibold border transition-all ${statusFilter === s
-                                        ? 'bg-[#7000ff] text-white border-[#7000ff]'
-                                        : 'bg-white text-slate-600 border-slate-200 hover:border-[#7000ff] hover:text-[#7000ff]'
+                                    ? 'bg-[#7000ff] text-white border-[#7000ff]'
+                                    : 'bg-white text-slate-600 border-slate-200 hover:border-[#7000ff] hover:text-[#7000ff]'
                                     }`}
                             >
                                 {STATUS_LABELS[s]}
